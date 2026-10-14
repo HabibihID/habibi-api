@@ -319,16 +319,11 @@ async function setWebhook(off) {
   const key = savedKey || document.getElementById('globalKey').value.trim();
   if (!key) return alert('Isi API Key dulu di atas!');
   const url = off ? '' : document.getElementById('webhookInput').value.trim();
-  const r = await fetch(API + '/api/key/webhook', {
+  const r = await fetch(API + '/api/key/webhook?apikey=' + encodeURIComponent(key), {
     method: 'POST', headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ webhook_url: url })
   });
-  // Perlu apikey — kirim via query
-  const r2 = await fetch(API + '/api/key/webhook?apikey=' + encodeURIComponent(key), {
-    method: 'POST', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ webhook_url: url })
-  });
-  const j = await r2.json();
+  const j = await r.json();
   document.getElementById('webhookResult').innerHTML =
     j.status ? `<span style="color:#22c55e">✅ ${j.message}</span>` : `<span style="color:#ef4444">❌ ${j.message}</span>`;
 }
