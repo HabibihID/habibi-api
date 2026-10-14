@@ -121,6 +121,8 @@ const PLATFORMS = {
   twitch:    { name: 'Twitch',    match: /(twitch\.tv)/ },
   reddit:    { name: 'Reddit',    match: /(reddit\.com)/ },
   pinterest: { name: 'Pinterest', match: /(pinterest\.com|pin\.it)/ },
+  soundcloud:{ name: 'SoundCloud', match: /(soundcloud\.com)/ },
+  capcut:    { name: 'CapCut',    match: /(capcut\.com)/ },
 };
 
 function platformDownload(platformKey) {
