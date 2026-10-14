@@ -124,6 +124,7 @@ const ENDPOINTS = [
   { cat: '🔥 Trending', method: 'GET', path: '/api/tools/tts', desc: 'Text to speech (audio)', en: 'Text to speech (audio)', params: [{name:'text', ph:'halo dunia'}, {name:'lang', ph:'id'}], img: true },
   { cat: '🔥 Trending', method: 'GET', path: '/api/canvas/brat', desc: 'Brat meme generator', en: 'Brat meme generator', params: [{name:'text', ph:'halo'}], img: true },
   // --- Downloader platform ---
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/threads', desc: 'Threads video/foto (via browser)', en: 'Threads video/photo (via browser)', params: [{name:'url', ph:'link threads'}], hot: true },
   { cat: '📥 Downloader', method: 'GET', path: '/api/download/youtube', desc: 'YouTube — semua format', en: 'YouTube — all formats', params: [{name:'url', ph:'link youtube'}] },
   { cat: '📥 Downloader', method: 'GET', path: '/api/download/facebook', desc: 'Facebook video', en: 'Facebook video', params: [{name:'url', ph:'link fb'}] },
   { cat: '📥 Downloader', method: 'GET', path: '/api/download/instagram', desc: 'Instagram post/reel', en: 'Instagram post/reel', params: [{name:'url', ph:'link ig'}] },
