@@ -194,6 +194,12 @@ const ENDPOINTS = [
   { cat: '🔥 Trending', method: 'GET', path: '/api/download/yt-thumb', desc: 'Thumbnail YouTube HD', en: 'HD YouTube thumbnail', params: [{name:'url', ph:'link youtube'}], img: true },
   { cat: '🔥 Trending', method: 'GET', path: '/api/tools/tts', desc: 'Text to speech (audio)', en: 'Text to speech (audio)', params: [{name:'text', ph:'halo dunia'}, {name:'lang', ph:'id'}], img: true },
   { cat: '🔥 Trending', method: 'GET', path: '/api/canvas/brat', desc: 'Brat meme generator', en: 'Brat meme generator', params: [{name:'text', ph:'halo'}], img: true },
+  // --- Maker ---
+  { cat: '🛠️ Maker', method: 'GET', path: '/api/maker/ttp', desc: 'Text to picture (custom warna)', en: 'Text to picture (custom colors)', params: [{name:'text', ph:'Halo'}, {name:'bg', ph:'a855f7'}, {name:'fg', ph:'ffffff'}], img: true, hot: true },
+  { cat: '🛠️ Maker', method: 'GET', path: '/api/maker/attp', desc: 'Animasi teks (buat stiker)', en: 'Animated text (for stickers)', params: [{name:'text', ph:'Halo'}], img: true },
+  { cat: '🛠️ Maker', method: 'GET', path: '/api/maker/emojimix', desc: 'Gabung 2 emoji', en: 'Mix 2 emojis', params: [{name:'emoji1', ph:'😀'}, {name:'emoji2', ph:'😎'}], img: true },
+  { cat: '🛠️ Maker', method: 'GET', path: '/api/maker/sticker', desc: 'Teks outline (stiker WA)', en: 'Outlined text (WA sticker)', params: [{name:'text', ph:'Halo'}], img: true },
+  { cat: '🛠️ Maker', method: 'GET', path: '/api/maker/nulis', desc: 'Efek tulisan tangan di buku', en: 'Handwriting on paper effect', params: [{name:'text', ph:'Halo dunia'}], img: true },
   // --- Ephoto360 ---
   { cat: '🎨 Ephoto 360', method: 'GET', path: '/api/ephoto/list', desc: 'Daftar semua effect', en: 'List all effects', params: [] },
   { cat: '🎨 Ephoto 360', method: 'GET', path: '/api/ephoto/glitch', desc: 'Glitch text effect', en: 'Glitch text effect', params: [{name:'text', ph:'HALO'}], img: true, hot: true },
