@@ -77,13 +77,13 @@ router.get('/canvas/brat', checkKey, async (req, res) => {
   const text = (req.query.text || 'brat').replace(/[<>&]/g, '').substring(0, 30);
   const format = (req.query.format || 'webp').toLowerCase();
   // Gaya brat ala bot: background putih, teks hitam Arial di atas, blur halus
+  // Pakai <text> murni (bukan foreignObject) biar bisa dirender sharp
+  const esc = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
+    <defs><filter id="b"><feGaussianBlur stdDeviation="1.5"/></filter></defs>
     <rect width="512" height="512" fill="#FFFFFF"/>
-    <foreignObject x="30" y="35" width="452" height="200">
-      <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial,Helvetica,sans-serif;font-size:138px;color:#000;filter:blur(1.5px);text-align:left;line-height:1;white-space:nowrap;">${text}</div>
-    </foreignObject>
+    <text x="30" y="150" font-family="Arial,Helvetica,sans-serif" font-size="130" fill="#000000" filter="url(#b)">${esc}</text>
   </svg>`;
-  // Default webp (format stiker WA), ?format=svg buat SVG mentah
   if (format === 'svg') return res.set('Content-Type', 'image/svg+xml').send(svg);
   try {
     const sharp = require('sharp');
