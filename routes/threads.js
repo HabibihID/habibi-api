@@ -33,7 +33,7 @@ async function scrapeThreads(url) {
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
 
     // Tunggu konten muncul
-    await page.waitForTimeout(3000);
+    await new Promise(r => setTimeout(r, 3000));
 
     const data = await page.evaluate(() => {
       const out = { videos: [], images: [], text: '', author: '' };
