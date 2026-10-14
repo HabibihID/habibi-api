@@ -163,4 +163,92 @@ for (const key of Object.keys(PLATFORMS)) {
   router.get(`/download/${key}`, checkKey, platformDownload(key));
 }
 
+// ============ 🔍 YOUTUBE SEARCH (play) ============
+router.get('/download/yt-search', checkKey, (req, res) => {
+  const q = (req.query.q || '').trim();
+  if (!q) return res.status(400).json({ status: false, message: 'Kirim ?q=kata_kunci' });
+  const n = Math.min(parseInt(req.query.limit) || 10, 20);
+
+  const hash = 'ytsearch_' + crypto.createHash('sha256').update(q).digest('hex');
+  const now = Math.floor(Date.now() / 1000);
+
+  db.get('SELECT data, created_at FROM dl_cache WHERE url_hash = ?', [hash], (err, row) => {
+    if (row && (now - row.created_at) < CACHE_TTL) {
+      const data = JSON.parse(row.data);
+      data.cached = true;
+      return res.json(data);
+    }
+    const ua = UA_POOL[Math.floor(Math.random() * UA_POOL.length)];
+    execFile('yt-dlp',
+      ['--dump-json', '--flat-playlist', '--no-warnings',
+       '--socket-timeout', '12', '--user-agent', ua,
+       `ytsearch${n}:${q}`],
+      { timeout: 30000, maxBuffer: 8 * 1024 * 1024 },
+      (err, stdout) => {
+        if (err) return res.status(502).json({ status: false, message: 'Gagal search YouTube' });
+        try {
+          const results = stdout.trim().split('\n')
+            .filter(Boolean)
+            .map(l => JSON.parse(l))
+            .map(v => ({
+              id: v.id,
+              judul: v.title,
+              durasi: v.duration,
+              uploader: v.uploader,
+              thumbnail: v.thumbnail,
+              url: v.webpage_url || `https://youtu.be/${v.id}`,
+              dl_mp4: `/api/download/youtube?url=${encodeURIComponent(v.webpage_url || `https://youtu.be/${v.id}`)}`,
+              dl_mp3: `/api/download/mp3?url=${encodeURIComponent(v.webpage_url || `https://youtu.be/${v.id}`)}`,
+            }));
+          const out = { status: true, cached: false, query: q, total: results.length, results };
+          db.run('INSERT OR REPLACE INTO dl_cache (url_hash, data, created_at) VALUES (?, ?, ?)',
+            [hash, JSON.stringify(out), now]);
+          res.json(out);
+        } catch { res.status(502).json({ status: false, message: 'Gagal parse hasil' }); }
+      });
+  });
+});
+
+// ============ 🎵 MP3 (audio only) ============
+router.get('/download/mp3', checkKey, (req, res) => {
+  const url = (req.query.url || '').trim();
+  if (!url) return res.status(400).json({ status: false, message: 'Kirim ?url=link_video' });
+  if (!validUrl(url)) return res.status(400).json({ status: false, message: 'URL tidak valid' });
+
+  const hash = 'mp3_' + crypto.createHash('sha256').update(url).digest('hex');
+  const now = Math.floor(Date.now() / 1000);
+
+  db.get('SELECT data, created_at FROM dl_cache WHERE url_hash = ?', [hash], (err, row) => {
+    if (row && (now - row.created_at) < CACHE_TTL) {
+      const data = JSON.parse(row.data);
+      data.cached = true;
+      return res.json(data);
+    }
+    ytdlpJson(url).then(j => {
+      const audios = (j.formats || [])
+        .filter(f => f.url && f.acodec !== 'none' && f.vcodec === 'none')
+        .map(f => ({
+          ext: f.ext,
+          bitrate: f.abr ? Math.round(f.abr) + 'kbps' : '?',
+          size: f.filesize ? Math.round(f.filesize/1024/1024*100)/100 + 'MB' : '?',
+          url: f.url,
+        }))
+        .sort((a, b) => parseInt(b.bitrate) - parseInt(a.bitrate));
+      const out = {
+        status: true, cached: false,
+        title: j.title, uploader: j.uploader || j.channel,
+        thumbnail: j.thumbnail, duration: j.duration,
+        audio_list: audios,
+        best_audio: audios[0] || null,
+        note: 'Direct URL audio (m4a/webm/opus). Untuk MP3 murni, convert via ffmpeg.',
+      };
+      db.run('INSERT OR REPLACE INTO dl_cache (url_hash, data, created_at) VALUES (?, ?, ?)',
+        [hash, JSON.stringify(out), now]);
+      res.json(out);
+    }).catch(e => {
+      res.status(e.status || 500).json({ status: false, message: e.message || 'Gagal' });
+    });
+  });
+});
+
 module.exports = router;
