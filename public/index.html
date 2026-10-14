@@ -3,354 +3,288 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Habibi API — Dokumentasi</title>
+<title>Habibi API — Dokumentasi Interaktif</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Segoe UI', sans-serif; background: #0d0d1a; color: #e0e0e0; padding: 20px; }
-  .container { max-width: 800px; margin: 0 auto; }
+  .container { max-width: 900px; margin: 0 auto; }
   h1 { color: #a855f7; font-size: 2em; margin-bottom: 5px; }
-  .subtitle { color: #888; margin-bottom: 30px; }
-  .card { background: #1a1a2e; border: 1px solid #a855f722; border-radius: 12px; padding: 20px; margin-bottom: 15px; }
-  .card h3 { color: #a855f7; margin-bottom: 10px; }
-  code { background: #0d0d1a; padding: 3px 8px; border-radius: 6px; color: #7dd3fc; font-size: 0.9em; }
-  .method { display: inline-block; background: #22c55e; color: #000; font-weight: bold; padding: 2px 10px; border-radius: 6px; font-size: 0.8em; margin-right: 8px; }
+  h1 a { color: #a855f7; text-decoration: none; }
+  .subtitle { color: #888; margin-bottom: 20px; }
+  .toolbar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; position: sticky; top: 0; background: #0d0d1a; padding: 10px 0; z-index: 10; }
+  .toolbar input { flex: 1; min-width: 200px; background: #1a1a2e; border: 1px solid #a855f744; color: #fff; padding: 10px 15px; border-radius: 8px; }
+  .toolbar .keybox { flex: 1; min-width: 250px; }
+  .cat-title { color: #a855f7; margin: 25px 0 15px; font-size: 1.4em; }
+  .card { background: #1a1a2e; border: 1px solid #a855f722; border-radius: 12px; padding: 18px; margin-bottom: 12px; }
+  .card h3 { color: #e0e0e0; margin-bottom: 8px; font-size: 1em; word-break: break-all; }
+  .card p.desc { color: #888; font-size: 0.9em; margin-bottom: 10px; }
+  code { background: #0d0d1a; padding: 3px 8px; border-radius: 6px; color: #7dd3fc; font-size: 0.85em; }
+  .method { display: inline-block; background: #22c55e; color: #000; font-weight: bold; padding: 2px 10px; border-radius: 6px; font-size: 0.75em; margin-right: 8px; }
   .method.post { background: #f59e0b; }
-  pre { background: #0d0d1a; padding: 15px; border-radius: 8px; overflow-x: auto; margin-top: 10px; font-size: 0.85em; }
-  .btn { display: inline-block; background: #a855f7; color: #fff; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: bold; margin-top: 10px; cursor: pointer; border: none; font-size: 1em; }
-  input { background: #0d0d1a; border: 1px solid #a855f744; color: #fff; padding: 10px 15px; border-radius: 8px; width: 250px; margin-right: 10px; }
-  #keyResult { margin-top: 15px; word-break: break-all; }
+  .btn { background: #a855f7; color: #fff; padding: 8px 20px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 0.9em; }
+  .btn:hover { opacity: 0.85; }
+  .btn-sm { padding: 5px 14px; font-size: 0.8em; }
+  .test-panel { margin-top: 12px; padding-top: 12px; border-top: 1px solid #333; display: none; }
+  .test-panel.open { display: block; }
+  .test-panel input { background: #0d0d1a; border: 1px solid #a855f744; color: #fff; padding: 8px 12px; border-radius: 6px; margin: 0 8px 8px 0; width: 220px; font-size: 0.9em; }
+  .test-panel label { font-size: 0.8em; color: #888; display: block; margin-bottom: 2px; }
+  .param-row { display: inline-block; margin-right: 5px; }
+  .response { background: #0d0d1a; border-radius: 8px; padding: 12px; margin-top: 10px; max-height: 300px; overflow: auto; font-family: monospace; font-size: 0.8em; white-space: pre-wrap; word-break: break-all; display: none; }
+  .response.show { display: block; }
+  .response.ok { border-left: 3px solid #22c55e; }
+  .response.err { border-left: 3px solid #ef4444; }
+  .hot { border-color: #f59e0b !important; }
+  .key-card { background: #1a1a2e; border: 1px solid #a855f744; border-radius: 12px; padding: 18px; margin-bottom: 15px; }
+  .key-card input { background: #0d0d1a; border: 1px solid #a855f744; color: #fff; padding: 10px 15px; border-radius: 8px; width: 200px; margin-right: 10px; }
+  #keyResult { margin-top: 12px; word-break: break-all; }
+  .copy-btn { background: #333; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75em; margin-left: 8px; }
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>🚀 Habibi API</h1>
-  <p class="subtitle">REST API cepat & stabil — gratis 1000 request</p>
+  <h1><a href="/">🚀 Habibi API</a></h1>
+  <p class="subtitle">Dokumentasi interaktif — klik <b>🧪 Test</b> buat coba langsung di browser</p>
 
-  <div class="card" style="border-color:#f59e0b">
-    <h3>💎 Tier Premium</h3>
-    <p><b>Free:</b> 1.000 request • <b>Premium:</b> 100.000 request/bulan</p>
-    <p style="margin-top:8px;color:#888">Mau upgrade ke Premium? Chat WhatsApp: 0851-8157-6338</p>
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="🔍 Cari endpoint... (misal: tiktok, sholat, ml)" oninput="filterEndpoints()">
+    <input type="text" id="globalKey" class="keybox" placeholder="🔑 API Key kamu (otomatis kepakai di semua test)" oninput="saveKey()">
   </div>
 
-  <div class="card">
-    <h3>🔑 Dapatkan API Key</h3>
+  <div class="key-card">
+    <h3 style="color:#a855f7;margin-bottom:10px">🔑 Belum punya API Key?</h3>
     <input type="text" id="nameInput" placeholder="Nama kamu">
     <button class="btn" onclick="genKey()">Generate Key</button>
     <div id="keyResult"></div>
   </div>
 
-  <div class="card">
-    <h3><span class="method post">POST</span> <code>/api/key/generate</code></h3>
-    <p>Body: <code>{"name": "namakamu"}</code></p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/key/info?apikey=KEY</code></h3>
-    <p>Cek sisa kuota API key kamu.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/canvas/text?text=Halo&apikey=KEY</code></h3>
-    <p>Bikin gambar teks (SVG). Contoh aman tanpa panggil layanan luar.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/download/info?url=LINK&apikey=KEY</code></h3>
-    <p>Ambil info video TikTok/YouTube/IG (judul, thumbnail, link download langsung). Hasil di-cache 1 jam biar IP server awet.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/info/time?apikey=KEY</code></h3>
-    <p>Dapatkan waktu server.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/info/echo?msg=halo&apikey=KEY</code></h3>
-    <p>Echo test.</p>
-  </div>
-
-  <h2 style="color:#a855f7;margin:25px 0 15px">🕌 Kategori Islami</h2>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/islami/jadwal-sholat?kota=Jakarta&apikey=KEY</code></h3>
-    <p>Jadwal sholat 7 waktu + tanggal hijriah.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/islami/quran/surah?apikey=KEY</code></h3>
-    <p>Daftar 114 surah Al-Quran.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/islami/quran/surah/1?apikey=KEY</code></h3>
-    <p>Ayat per surah (arab + latin + terjemahan). Ganti 1 dengan nomor surah.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/islami/hijriah?apikey=KEY</code></h3>
-    <p>Tanggal hijriah hari ini.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/islami/doa?apikey=KEY</code></h3>
-    <p>Kumpulan doa harian (data lokal, cepat).</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/islami/asmaul-husna?apikey=KEY</code></h3>
-    <p>Asmaul Husna (data lokal, cepat).</p>
-  </div>
-
-  <h2 style="color:#a855f7;margin:25px 0 15px">🎮 Game</h2>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/game/free?apikey=KEY</code></h3>
-    <p>Daftar game PC gratis.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/game/detail/452?apikey=KEY</code></h3>
-    <p>Detail game + spesifikasi minimum.</p>
-  </div>
-
-  <h2 style="color:#a855f7;margin:25px 0 15px">🌤️ Cuaca</h2>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/cuaca?kota=jakarta&apikey=KEY</code></h3>
-    <p>Cuaca kota Indonesia (jakarta, bandung, surabaya, medan, semarang, makassar, denpasar, yogyakarta).</p>
-  </div>
-
-  <h2 style="color:#a855f7;margin:25px 0 15px">😂 Fun</h2>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/fun/joke?apikey=KEY</code></h3>
-    <p>Joke random bahasa Inggris.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/fun/quote?apikey=KEY</code></h3>
-    <p>Quote random + author.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/fun/catfact?apikey=KEY</code></h3>
-    <p>Fakta random tentang kucing.</p>
-  </div>
-
-  <h2 style="color:#a855f7;margin:25px 0 15px">🛠️ Tools</h2>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/tools/qrcode?text=halo&apikey=KEY</code></h3>
-    <p>Generate QR code (balikin gambar).</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/tools/password?length=16&apikey=KEY</code></h3>
-    <p>Generate password aman.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/tools/base64?text=halo&mode=encode&apikey=KEY</code></h3>
-    <p>Encode/decode Base64.</p>
-  </div>
-
-  <h2 style="color:#a855f7;margin:25px 0 15px">🎨 Canvas</h2>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/canvas/text?text=Halo&apikey=KEY</code></h3>
-    <p>Gambar teks simpel.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/canvas/quote?text=Semangat&author=Aku&apikey=KEY</code></h3>
-    <p>Gambar quote aesthetic.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/canvas/welcome?name=Budi&apikey=KEY</code></h3>
-    <p>Welcome card member baru.</p>
-  </div>
-
-  <h2 style="color:#a855f7;margin:25px 0 15px">💰 Crypto & Info</h2>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/crypto/harga?coin=bitcoin&apikey=KEY</code></h3>
-    <p>Harga crypto dalam IDR & USD.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/gempa?apikey=KEY</code></h3>
-    <p>Gempa terkini dari BMKG.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/translate?text=halo&dari=id&ke=en&apikey=KEY</code></h3>
-    <p>Translate antar bahasa.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/kamus/hello?apikey=KEY</code></h3>
-    <p>Kamus bahasa Inggris + contoh.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/meme?apikey=KEY</code></h3>
-    <p>Meme random dari Reddit.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/hewan/anjing?apikey=KEY</code></h3>
-    <p>Foto anjing random. Ganti <code>anjing</code> dengan <code>kucing</code>.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/saran?apikey=KEY</code></h3>
-    <p>Saran random bahasa Inggris.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/fakta-angka/42?apikey=KEY</code></h3>
-    <p>Fakta menarik tentang angka.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/random/user?apikey=KEY</code></h3>
-    <p>Data user random + foto.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/tebak/umur?nama=budi&apikey=KEY</code></h3>
-    <p>Tebak umur dari nama. Ganti <code>umur</code> dengan <code>gender</code>.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/npm/express?apikey=KEY</code></h3>
-    <p>Info package NPM.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/github/octocat?apikey=KEY</code></h3>
-    <p>Info user GitHub.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/shortlink?url=https://google.com&apikey=KEY</code></h3>
-    <p>Perpendek URL.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/aktivitas?apikey=KEY</code></h3>
-    <p>Ide aktivitas random.</p>
-  </div>
-
-  <h2 style="color:#a855f7;margin:25px 0 15px">🔥 Trending</h2>
-
-  <div class="card" style="border-color:#f59e0b">
-    <h3><span class="method">GET</span> <code>/api/ai/chat?text=halo&apikey=KEY</code></h3>
-    <p>Chat dengan AI (gratis, tanpa key OpenAI).</p>
-  </div>
-
-  <div class="card" style="border-color:#f59e0b">
-    <h3><span class="method">GET</span> <code>/api/ai/image?prompt=kucing%20lucu&apikey=KEY</code></h3>
-    <p>Generate gambar dari teks dengan AI (balikin gambar).</p>
-  </div>
-
-  <div class="card" style="border-color:#f59e0b">
-    <h3><span class="method">GET</span> <code>/api/download/tiktok?url=LINK&apikey=KEY</code></h3>
-    <p>Download video TikTok tanpa watermark + HD.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/download/info?url=LINK_VIDEO&apikey=KEY</code></h3>
-    <p>Info video universal (1000+ situs didukung yt-dlp) + link download, cache 1 jam.</p>
-  </div>
-
-  <div class="card" style="border-color:#f59e0b">
-    <h3><span class="method">GET</span> <code>/api/download/yt-search?q=lagu&limit=5&apikey=KEY</code></h3>
-    <p>🔍 Search YouTube — balikin judul, durasi, thumbnail + link siap download MP4/MP3.</p>
-  </div>
-
-  <div class="card" style="border-color:#f59e0b">
-    <h3><span class="method">GET</span> <code>/api/download/mp3?url=LINK&apikey=KEY</code></h3>
-    <p>🎵 Audio only — daftar semua format audio + best pick (m4a/webm).</p>
-  </div>
-
-  <h2 style="color:#a855f7;margin:25px 0 15px">🕵️ Stalker</h2>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/stalk/github?username=octocat&apikey=KEY</code></h3>
-    <p>Profil GitHub lengkap + 5 repo terbaru.</p>
-  </div>
-
-  <div class="card" style="border-color:#f59e0b">
-    <h3>🎮 Stalker Game (15 game!)</h3>
-    <p style="margin-bottom:8px">Cek nickname dari ID player:</p>
-    <code>/api/stalk/ff?id=</code> Free Fire<br>
-    <code>/api/stalk/ml?id=&zone=</code> Mobile Legends<br>
-    <code>/api/stalk/aov?id=</code> Arena of Valor<br>
-    <code>/api/stalk/codm?id=</code> COD Mobile<br>
-    <code>/api/stalk/gi?id=</code> Genshin Impact<br>
-    <code>/api/stalk/hsr?id=</code> Honkai Star Rail<br>
-    <code>/api/stalk/zzz?id=</code> Zenless Zone Zero<br>
-    <code>/api/stalk/valo?id=</code> Valorant<br>
-    <code>/api/stalk/pb?id=</code> Point Blank<br>
-    <code>/api/stalk/sausageman?id=</code> Sausage Man<br>
-    <code>/api/stalk/supersus?id=</code> Super Sus<br>
-    <code>/api/stalk/aethergazer?id=</code> Aether Gazer<br>
-    <code>/api/stalk/pgr?id=</code> Punishing Gray Raven<br>
-    <code>/api/stalk/lifeafter?id=&zone=</code> LifeAfter<br>
-    <code>/api/stalk/hi3?id=</code> Honkai Impact 3rd
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/github/octocat?apikey=KEY</code></h3>
-    <p>Info GitHub simpel.</p>
-  </div>
-
-  <div class="card" style="border-color:#22c55e">
-    <h3>📥 Downloader per Platform</h3>
-    <p style="margin-bottom:8px">Format lengkap (semua kualitas MP4 + audio) per platform:</p>
-    <code>/api/download/youtube?url=</code><br>
-    <code>/api/download/facebook?url=</code><br>
-    <code>/api/download/instagram?url=</code><br>
-    <code>/api/download/twitter?url=</code><br>
-    <code>/api/download/douyin?url=</code><br>
-    <code>/api/download/dailymotion?url=</code><br>
-    <code>/api/download/vimeo?url=</code><br>
-    <code>/api/download/twitch?url=</code><br>
-    <code>/api/download/reddit?url=</code><br>
-    <code>/api/download/pinterest?url=</code>
-    <p style="margin-top:8px;color:#888">+ TikTok via <code>/api/download/tiktok?url=</code> (tanpa watermark)</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/download/yt-thumb?url=LINK_YOUTUBE&apikey=KEY</code></h3>
-    <p>Ambil thumbnail YouTube resolusi max.</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/tools/tts?text=halo&lang=id&apikey=KEY</code></h3>
-    <p>Text to speech (balikin audio MP3).</p>
-  </div>
-
-  <div class="card">
-    <h3><span class="method">GET</span> <code>/api/canvas/brat?text=halo&apikey=KEY</code></h3>
-    <p>Brat meme generator (lime green).</p>
-  </div>
+  <div id="endpoints"></div>
 </div>
 
 <script>
+const API = '';  // relative — jalan di domain yang sama
+let savedKey = localStorage.getItem('habibi_key') || '';
+document.getElementById('globalKey').value = savedKey;
+function saveKey() {
+  savedKey = document.getElementById('globalKey').value.trim();
+  localStorage.setItem('habibi_key', savedKey);
+}
+
+// method, path, desc, params[{name, placeholder, required}], hot?
+const ENDPOINTS = [
+  // --- Key ---
+  { cat: '🔑 API Key', method: 'POST', path: '/api/key/generate', desc: 'Bikin API key baru (body: {"name"})', params: [{name:'name', ph:'namakamu'}], body: true },
+  { cat: '🔑 API Key', method: 'GET', path: '/api/key/info', desc: 'Cek sisa kuota', params: [] },
+  // --- Islami ---
+  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/jadwal-sholat', desc: 'Jadwal sholat 7 waktu + hijriah', params: [{name:'kota', ph:'Jakarta'}], hot: true },
+  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/quran/surah', desc: 'Daftar 114 surah', params: [] },
+  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/quran/surah/{nomor}', desc: 'Ayat per surah + terjemahan', params: [{name:'nomor', ph:'1', path: true}] },
+  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/hijriah', desc: 'Tanggal hijriah hari ini', params: [] },
+  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/doa', desc: 'Doa harian', params: [] },
+  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/asmaul-husna', desc: 'Asmaul Husna', params: [] },
+  // --- Trending ---
+  { cat: '🔥 Trending', method: 'GET', path: '/api/ai/chat', desc: 'Chat AI gratis', params: [{name:'text', ph:'halo apa kabar'}], hot: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/ai/image', desc: 'Generate gambar AI (redirect gambar)', params: [{name:'prompt', ph:'kucing lucu'}], hot: true, img: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/download/tiktok', desc: 'TikTok tanpa watermark + HD', params: [{name:'url', ph:'link tiktok'}], hot: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/download/info', desc: 'Info video universal (1000+ situs)', params: [{name:'url', ph:'link video'}] },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/download/yt-search', desc: 'Search YouTube + link MP4/MP3', params: [{name:'q', ph:'judul lagu'}], hot: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/download/mp3', desc: 'Audio only', params: [{name:'url', ph:'link youtube'}] },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/download/yt-thumb', desc: 'Thumbnail YouTube HD', params: [{name:'url', ph:'link youtube'}], img: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/tools/tts', desc: 'Text to speech (audio)', params: [{name:'text', ph:'halo dunia'}, {name:'lang', ph:'id'}], img: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/canvas/brat', desc: 'Brat meme generator', params: [{name:'text', ph:'halo'}], img: true },
+  // --- Downloader platform ---
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/youtube', desc: 'YouTube — semua format', params: [{name:'url', ph:'link youtube'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/facebook', desc: 'Facebook video', params: [{name:'url', ph:'link fb'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/instagram', desc: 'Instagram post/reel', params: [{name:'url', ph:'link ig'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/twitter', desc: 'Twitter/X video', params: [{name:'url', ph:'link twitter'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/douyin', desc: 'Douyin video', params: [{name:'url', ph:'link douyin'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/vimeo', desc: 'Vimeo', params: [{name:'url', ph:'link vimeo'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/twitch', desc: 'Twitch clip', params: [{name:'url', ph:'link twitch'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/reddit', desc: 'Reddit video', params: [{name:'url', ph:'link reddit'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/pinterest', desc: 'Pinterest', params: [{name:'url', ph:'link pin'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/dailymotion', desc: 'Dailymotion', params: [{name:'url', ph:'link'}] },
+  // --- Stalker game ---
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/ff', desc: 'Free Fire nickname', params: [{name:'id', ph:'player ID'}], hot: true },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/ml', desc: 'Mobile Legends nickname', params: [{name:'id', ph:'player ID'}, {name:'zone', ph:'zone ID'}], hot: true },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/gi', desc: 'Genshin Impact', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/hsr', desc: 'Honkai Star Rail', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/zzz', desc: 'Zenless Zone Zero', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/valo', desc: 'Valorant', params: [{name:'id', ph:'riot ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/aov', desc: 'Arena of Valor', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/codm', desc: 'COD Mobile', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/pb', desc: 'Point Blank', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/sausageman', desc: 'Sausage Man', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/supersus', desc: 'Super Sus', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/aethergazer', desc: 'Aether Gazer', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/pgr', desc: 'Punishing Gray Raven', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/hi3', desc: 'Honkai Impact 3rd', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/lifeafter', desc: 'LifeAfter', params: [{name:'id', ph:'player ID'}, {name:'zone', ph:'server'}] },
+  // --- Stalker sosmed/dev ---
+  { cat: '🕵️ Stalker', method: 'GET', path: '/api/stalk/github', desc: 'Profil GitHub + repo terbaru', params: [{name:'username', ph:'octocat'}] },
+  { cat: '🕵️ Stalker', method: 'GET', path: '/api/github/{username}', desc: 'Info GitHub simpel', params: [{name:'username', ph:'octocat', path: true}] },
+  { cat: '🕵️ Stalker', method: 'GET', path: '/api/npm/{package}', desc: 'Info package NPM', params: [{name:'package', ph:'express', path: true}] },
+  // --- Game info ---
+  { cat: '🎮 Game Info', method: 'GET', path: '/api/game/free', desc: 'Game PC gratis', params: [] },
+  { cat: '🎮 Game Info', method: 'GET', path: '/api/game/detail/{id}', desc: 'Detail game + spek', params: [{name:'id', ph:'452', path: true}] },
+  // --- Cuaca ---
+  { cat: '🌤️ Cuaca', method: 'GET', path: '/api/cuaca', desc: 'Cuaca kota Indonesia', params: [{name:'kota', ph:'jakarta'}] },
+  // --- Fun ---
+  { cat: '😂 Fun', method: 'GET', path: '/api/fun/joke', desc: 'Joke random', params: [] },
+  { cat: '😂 Fun', method: 'GET', path: '/api/fun/quote', desc: 'Quote random', params: [] },
+  { cat: '😂 Fun', method: 'GET', path: '/api/fun/catfact', desc: 'Fakta kucing', params: [] },
+  { cat: '😂 Fun', method: 'GET', path: '/api/meme', desc: 'Meme Reddit', params: [] },
+  { cat: '😂 Fun', method: 'GET', path: '/api/hewan/anjing', desc: 'Foto anjing', params: [], img: true },
+  { cat: '😂 Fun', method: 'GET', path: '/api/hewan/kucing', desc: 'Foto kucing', params: [], img: true },
+  { cat: '😂 Fun', method: 'GET', path: '/api/saran', desc: 'Saran random', params: [] },
+  { cat: '😂 Fun', method: 'GET', path: '/api/aktivitas', desc: 'Ide aktivitas', params: [] },
+  { cat: '😂 Fun', method: 'GET', path: '/api/fakta-angka/{angka}', desc: 'Fakta angka', params: [{name:'angka', ph:'42', path: true}] },
+  // --- Tools ---
+  { cat: '🛠️ Tools', method: 'GET', path: '/api/tools/qrcode', desc: 'QR code (gambar)', params: [{name:'text', ph:'halo'}], img: true },
+  { cat: '🛠️ Tools', method: 'GET', path: '/api/tools/password', desc: 'Password generator', params: [{name:'length', ph:'16'}] },
+  { cat: '🛠️ Tools', method: 'GET', path: '/api/tools/base64', desc: 'Encode/decode Base64', params: [{name:'text', ph:'halo'}, {name:'mode', ph:'encode'}] },
+  { cat: '🛠️ Tools', method: 'GET', path: '/api/shortlink', desc: 'Perpendek URL', params: [{name:'url', ph:'https://...'}] },
+  { cat: '🛠️ Tools', method: 'GET', path: '/api/translate', desc: 'Translate', params: [{name:'text', ph:'halo'}, {name:'dari', ph:'id'}, {name:'ke', ph:'en'}] },
+  { cat: '🛠️ Tools', method: 'GET', path: '/api/kamus/{kata}', desc: 'Kamus Inggris', params: [{name:'kata', ph:'hello', path: true}] },
+  // --- Canvas ---
+  { cat: '🎨 Canvas', method: 'GET', path: '/api/canvas/text', desc: 'Gambar teks', params: [{name:'text', ph:'Halo'}], img: true },
+  { cat: '🎨 Canvas', method: 'GET', path: '/api/canvas/quote', desc: 'Quote aesthetic', params: [{name:'text', ph:'Semangat'}, {name:'author', ph:'Aku'}], img: true },
+  { cat: '🎨 Canvas', method: 'GET', path: '/api/canvas/welcome', desc: 'Welcome card', params: [{name:'name', ph:'Budi'}], img: true },
+  // --- Info ---
+  { cat: 'ℹ️ Info', method: 'GET', path: '/api/info/time', desc: 'Waktu server', params: [] },
+  { cat: 'ℹ️ Info', method: 'GET', path: '/api/info/echo', desc: 'Echo test', params: [{name:'msg', ph:'halo'}] },
+  { cat: 'ℹ️ Info', method: 'GET', path: '/api/crypto/harga', desc: 'Harga crypto IDR/USD', params: [{name:'coin', ph:'bitcoin'}] },
+  { cat: 'ℹ️ Info', method: 'GET', path: '/api/gempa', desc: 'Gempa BMKG terkini', params: [] },
+  { cat: 'ℹ️ Info', method: 'GET', path: '/api/random/user', desc: 'User random', params: [] },
+  { cat: 'ℹ️ Info', method: 'GET', path: '/api/tebak/umur', desc: 'Tebak umur dari nama', params: [{name:'nama', ph:'budi'}] },
+  { cat: 'ℹ️ Info', method: 'GET', path: '/api/tebak/gender', desc: 'Tebak gender dari nama', params: [{name:'nama', ph:'siti'}] },
+];
+
+let lastCat = '';
+let html = '';
+ENDPOINTS.forEach((ep, i) => {
+  if (ep.cat !== lastCat) { html += `<div class="cat-title">${ep.cat}</div>`; lastCat = ep.cat; }
+  const mCls = ep.method === 'POST' ? 'method post' : 'method';
+  html += `<div class="card${ep.hot ? ' hot' : ''}" data-search="${(ep.path + ' ' + ep.desc).toLowerCase()}">
+    <h3><span class="${mCls}">${ep.method}</span><code>${ep.path}</code>
+      <button class="copy-btn" onclick="copyUrl(${i})">📋</button></h3>
+    <p class="desc">${ep.desc}</p>
+    <button class="btn btn-sm" onclick="toggleTest(${i})">🧪 Test</button>
+    <div class="test-panel" id="tp-${i}">
+      ${ep.params.map(p => p.path ? '' : `<span class="param-row"><label>${p.name}</label><input id="p-${i}-${p.name}" placeholder="${p.ph || ''}"></span>`).join('')}
+      ${ep.params.filter(p => p.path).map(p => `<span class="param-row"><label>${p.name} (di URL)</label><input id="p-${i}-${p.name}" placeholder="${p.ph || ''}"></span>`).join('')}
+      <br><button class="btn btn-sm" onclick="runTest(${i})">▶ Kirim</button>
+      <div class="response" id="resp-${i}"></div>
+    </div>
+  </div>`;
+});
+document.getElementById('endpoints').innerHTML = html;
+
+function toggleTest(i) {
+  document.getElementById('tp-' + i).classList.toggle('open');
+}
+
+function buildUrl(i) {
+  const ep = ENDPOINTS[i];
+  let path = ep.path;
+  const qs = [];
+  ep.params.forEach(p => {
+    const v = (document.getElementById(`p-${i}-${p.name}`) || {}).value || '';
+    if (p.path) { path = path.replace('{' + p.name + '}', encodeURIComponent(v || p.ph || '')); }
+    else if (v) { qs.push(p.name + '=' + encodeURIComponent(v)); }
+  });
+  // path params yang kosong pakai placeholder
+  path = path.replace(/\{(\w+)\}/g, (m, n) => {
+    const ep2 = ENDPOINTS[i].params.find(p => p.name === n);
+    return encodeURIComponent((ep2 && ep2.ph) || '');
+  });
+  const key = savedKey || document.getElementById('globalKey').value.trim();
+  if (ep.method === 'GET' && !ep.body) {
+    if (key) qs.push('apikey=' + encodeURIComponent(key));
+    return { url: API + path + (qs.length ? '?' + qs.join('&') : ''), method: 'GET' };
+  }
+  return { url: API + path, method: ep.method, body: ep.body ? collectBody(i) : null };
+}
+
+function collectBody(i) {
+  const ep = ENDPOINTS[i];
+  const b = {};
+  ep.params.forEach(p => {
+    const v = (document.getElementById(`p-${i}-${p.name}`) || {}).value;
+    if (v) b[p.name] = v;
+  });
+  const key = savedKey;
+  return b;
+}
+
+async function runTest(i) {
+  const ep = ENDPOINTS[i];
+  const respEl = document.getElementById('resp-' + i);
+  const { url, method, body } = buildUrl(i);
+  respEl.className = 'response show';
+  respEl.textContent = '⏳ Loading...';
+  try {
+    const opts = { method, headers: {} };
+    if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+    const r = await fetch(url, opts);
+    const ct = r.headers.get('content-type') || '';
+    if (ep.img || ct.startsWith('image/')) {
+      respEl.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = url; img.style.maxWidth = '100%'; img.style.borderRadius = '8px';
+      respEl.appendChild(img);
+    } else if (ct.includes('audio') || url.includes('/tts')) {
+      respEl.innerHTML = `<audio controls src="${url}" style="width:100%"></audio>`;
+    } else {
+      const t = await r.text();
+      try { respEl.textContent = JSON.stringify(JSON.parse(t), null, 2); }
+      catch { respEl.textContent = t.substring(0, 2000); }
+    }
+    respEl.classList.add(r.ok ? 'ok' : 'err');
+  } catch (e) {
+    respEl.textContent = '❌ Error: ' + e.message;
+    respEl.classList.add('err');
+  }
+}
+
+function copyUrl(i) {
+  const { url } = buildUrl(i);
+  navigator.clipboard.writeText(location.origin + url).then(() => alert('URL dicopy!'));
+}
+
+function filterEndpoints() {
+  const q = document.getElementById('search').value.toLowerCase();
+  document.querySelectorAll('.card[data-search]').forEach(c => {
+    c.classList.toggle('hidden', q && !c.dataset.search.includes(q));
+  });
+  document.querySelectorAll('.cat-title').forEach(t => {
+    let next = t.nextElementSibling, any = false;
+    while (next && !next.classList.contains('cat-title')) {
+      if (!next.classList.contains('hidden')) { any = true; break; }
+      next = next.nextElementSibling;
+    }
+    t.classList.toggle('hidden', q && !any);
+  });
+}
+
 async function genKey() {
   const name = document.getElementById('nameInput').value || 'user';
-  const r = await fetch('/api/key/generate', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+  const r = await fetch(API + '/api/key/generate', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({name})
   });
   const j = await r.json();
-  document.getElementById('keyResult').innerHTML =
-    j.status ? `<code style="font-size:1.1em">${j.apikey}</code><p style="margin-top:8px;color:#888">Simpan! Kuota: ${j.quota}</p>`
-              : `<p style="color:red">${j.message}</p>`;
+  const el = document.getElementById('keyResult');
+  if (j.status) {
+    el.innerHTML = `<code style="font-size:1.1em">${j.apikey}</code>
+      <button class="btn btn-sm" style="margin-left:10px" onclick="useKey('${j.apikey}')">Pakai Key Ini</button>
+      <p style="margin-top:8px;color:#888">Tier: ${j.tier} • Kuota: ${j.quota}</p>`;
+  } else el.innerHTML = `<p style="color:red">${j.message}</p>`;
+}
+
+function useKey(k) {
+  document.getElementById('globalKey').value = k;
+  saveKey();
+  alert('Key tersimpan! Sekarang bisa test semua endpoint.');
 }
 </script>
 </body>
