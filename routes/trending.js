@@ -73,16 +73,25 @@ router.get('/tools/tts', checkKey, (req, res) => {
 });
 
 // ============ 🟢 BRAT MAKER (meme trending!) ============
-router.get('/canvas/brat', checkKey, (req, res) => {
+router.get('/canvas/brat', checkKey, async (req, res) => {
   const text = (req.query.text || 'brat').replace(/[<>&]/g, '').substring(0, 30);
+  const format = (req.query.format || 'webp').toLowerCase();
   // Gaya brat ala bot: background putih, teks hitam Arial di atas, blur halus
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">
-    <rect width="500" height="500" fill="#FFFFFF"/>
-    <foreignObject x="30" y="35" width="440" height="200">
-      <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial,Helvetica,sans-serif;font-size:135px;color:#000;filter:blur(1.5px);text-align:left;line-height:1;white-space:nowrap;">${text}</div>
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
+    <rect width="512" height="512" fill="#FFFFFF"/>
+    <foreignObject x="30" y="35" width="452" height="200">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial,Helvetica,sans-serif;font-size:138px;color:#000;filter:blur(1.5px);text-align:left;line-height:1;white-space:nowrap;">${text}</div>
     </foreignObject>
   </svg>`;
-  res.set('Content-Type', 'image/svg+xml').send(svg);
+  // Default webp (format stiker WA), ?format=svg buat SVG mentah
+  if (format === 'svg') return res.set('Content-Type', 'image/svg+xml').send(svg);
+  try {
+    const sharp = require('sharp');
+    const webp = await sharp(Buffer.from(svg)).webp({ quality: 90 }).toBuffer();
+    res.set('Content-Type', 'image/webp').send(webp);
+  } catch (e) {
+    res.set('Content-Type', 'image/svg+xml').send(svg);
+  }
 });
 
 // ============ 🖼️ YOUTUBE THUMBNAIL ============
