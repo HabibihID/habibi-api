@@ -9,6 +9,7 @@ const extraRoutes = require('./routes/extra');
 const downloadRoutes = require('./routes/download');
 const trendingRoutes = require('./routes/trending');
 const stalkRoutes = require('./routes/stalk');
+const searchRoutes = require('./routes/search');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -42,6 +43,7 @@ app.use('/api', extraRoutes);
 app.use('/api', downloadRoutes);
 app.use('/api', trendingRoutes);
 app.use('/api', stalkRoutes);
+app.use('/api', searchRoutes);
 app.get('/docs', (req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
 app.get('/stats', (req, res) => res.sendFile(path.join(__dirname, 'public/stats.html')));
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public/landing.html')));

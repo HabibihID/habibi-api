@@ -110,6 +110,9 @@ const ENDPOINTS = [
   { cat: '🕌 Islami', method: 'GET', path: '/api/islami/hijriah', desc: 'Tanggal hijriah hari ini', en: "Today's Hijri date", params: [] },
   { cat: '🕌 Islami', method: 'GET', path: '/api/islami/doa', desc: 'Doa harian', en: 'Daily duas', params: [] },
   { cat: '🕌 Islami', method: 'GET', path: '/api/islami/asmaul-husna', desc: 'Asmaul Husna', en: 'Names of Allah', params: [] },
+  // --- Search ---
+  { cat: '🔍 Search', method: 'GET', path: '/api/search/musik', desc: 'Cari lagu + preview 30 detik', en: 'Search music + 30s preview', params: [{name:'q', ph:'judul lagu'}], hot: true },
+  { cat: '🔍 Search', method: 'GET', path: '/api/search/gambar', desc: 'Cari gambar/wallpaper HD', en: 'Search HD images/wallpapers', params: [{name:'q', ph:'nature'}], hot: true },
   // --- Trending ---
   { cat: '🔥 Trending', method: 'GET', path: '/api/ai/chat', desc: 'Chat AI gratis', en: 'Free AI chat', params: [{name:'text', ph:'halo apa kabar'}], hot: true },
   { cat: '🔥 Trending', method: 'GET', path: '/api/ai/image', desc: 'Generate gambar AI (redirect gambar)', en: 'AI image generation (redirects to image)', params: [{name:'prompt', ph:'kucing lucu'}], hot: true, img: true },
