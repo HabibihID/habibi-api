@@ -97,4 +97,70 @@ router.get('/download/info', checkKey, (req, res) => {
   });
 });
 
+// ============ DOWNLOADER PER-PLATFORM (yt-dlp backend) ============
+// Daftar platform yang didukung penuh via yt-dlp
+const PLATFORMS = {
+  youtube:   { name: 'YouTube',   match: /(youtube\.com|youtu\.be)/ },
+  facebook:  { name: 'Facebook',  match: /(facebook\.com|fb\.watch)/ },
+  instagram: { name: 'Instagram', match: /(instagram\.com)/ },
+  twitter:   { name: 'Twitter/X', match: /(twitter\.com|x\.com)/ },
+  douyin:    { name: 'Douyin',    match: /(douyin\.com|v\.douyin\.com)/ },
+  dailymotion: { name: 'Dailymotion', match: /(dailymotion\.com|dai\.ly)/ },
+  vimeo:     { name: 'Vimeo',     match: /(vimeo\.com)/ },
+  twitch:    { name: 'Twitch',    match: /(twitch\.tv)/ },
+  reddit:    { name: 'Reddit',    match: /(reddit\.com)/ },
+  pinterest: { name: 'Pinterest', match: /(pinterest\.com|pin\.it)/ },
+};
+
+function platformDownload(platformKey) {
+  const pf = PLATFORMS[platformKey];
+  return (req, res) => {
+    const url = (req.query.url || '').trim();
+    if (!url) return res.status(400).json({ status: false, message: `Kirim ?url=link_${pf.name}` });
+    if (!validUrl(url)) return res.status(400).json({ status: false, message: 'URL tidak valid' });
+    if (!pf.match.test(url)) return res.status(400).json({ status: false, message: `URL bukan ${pf.name}` });
+
+    const hash = 'pf_' + crypto.createHash('sha256').update(url).digest('hex');
+    const now = Math.floor(Date.now() / 1000);
+
+    db.get('SELECT data, created_at FROM dl_cache WHERE url_hash = ?', [hash], (err, row) => {
+      if (row && (now - row.created_at) < CACHE_TTL) {
+        const data = JSON.parse(row.data);
+        data.cached = true;
+        return res.json(data);
+      }
+      ytdlpJson(url).then(j => {
+        // Semua format video yang tersedia
+        const formats = (j.formats || [])
+          .filter(f => f.url && f.ext === 'mp4' && f.vcodec !== 'none')
+          .map(f => ({ quality: (f.height || 0) + 'p', size: f.filesize ? Math.round(f.filesize/1024/1024)+'MB' : '?', url: f.url }))
+          .sort((a, b) => parseInt(b.quality) - parseInt(a.quality))
+          .slice(0, 8);
+        // Audio only
+        const audios = (j.formats || [])
+          .filter(f => f.url && f.acodec !== 'none' && f.vcodec === 'none')
+          .slice(0, 3)
+          .map(f => ({ ext: f.ext, bitrate: f.abr ? Math.round(f.abr)+'kbps' : '?', url: f.url }));
+        const out = {
+          status: true, cached: false, platform: pf.name,
+          title: j.title, duration: j.duration,
+          uploader: j.uploader || j.channel,
+          thumbnail: j.thumbnail, webpage_url: j.webpage_url,
+          formats, audio: audios,
+          best: formats[0] || null,
+        };
+        db.run('INSERT OR REPLACE INTO dl_cache (url_hash, data, created_at) VALUES (?, ?, ?)',
+          [hash, JSON.stringify(out), now]);
+        res.json(out);
+      }).catch(e => {
+        res.status(e.status || 500).json({ status: false, message: e.message || 'Gagal ambil video' });
+      });
+    });
+  };
+}
+
+for (const key of Object.keys(PLATFORMS)) {
+  router.get(`/download/${key}`, checkKey, platformDownload(key));
+}
+
 module.exports = router;
