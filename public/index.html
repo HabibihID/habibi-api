@@ -39,12 +39,31 @@
   #keyResult { margin-top: 12px; word-break: break-all; }
   .copy-btn { background: #333; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75em; margin-left: 8px; }
   .hidden { display: none !important; }
+  .lang-btn { background: #1a1a2e; border: 1px solid #a855f744; color: #a855f7; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+  .lang-btn.active { background: #a855f7; color: #fff; }
+  /* Mobile responsive */
+  @media (max-width: 600px) {
+    body { padding: 12px; }
+    h1 { font-size: 1.5em; }
+    .card { padding: 14px; }
+    .card h3 { font-size: 0.85em; }
+    .test-panel input { width: 100%; margin-bottom: 8px; }
+    .param-row { display: block; }
+    .toolbar { position: static; }
+    .toolbar input { min-width: 100%; }
+  }
 </style>
 </head>
 <body>
 <div class="container">
   <h1><a href="/">🚀 Habibi API</a></h1>
-  <p class="subtitle">Dokumentasi interaktif — klik <b>🧪 Test</b> buat coba langsung di browser</p>
+  <p class="subtitle"><span data-id="Dokumentasi interaktif — klik 🧪 Test buat coba langsung di browser" data-en="Interactive docs — click 🧪 Test to try directly in browser">Dokumentasi interaktif — klik <b>🧪 Test</b> buat coba langsung di browser</span></p>
+
+  <div style="margin-bottom:15px">
+    <button class="lang-btn active" onclick="setLang('id')">🇮🇩 Indonesia</button>
+    <button class="lang-btn" onclick="setLang('en')">🇬🇧 English</button>
+    <a href="/stats" class="btn btn-sm" style="margin-left:10px;text-decoration:none">📊 Statistik</a>
+  </div>
 
   <div class="toolbar">
     <input type="text" id="search" placeholder="🔍 Cari endpoint... (misal: tiktok, sholat, ml)" oninput="filterEndpoints()">
@@ -56,6 +75,15 @@
     <input type="text" id="nameInput" placeholder="Nama kamu">
     <button class="btn" onclick="genKey()">Generate Key</button>
     <div id="keyResult"></div>
+  </div>
+
+  <div class="key-card" style="border-color:#f59e0b">
+    <h3 style="color:#f59e0b;margin-bottom:10px">🔔 Webhook Notifikasi Kuota</h3>
+    <p style="color:#888;font-size:0.9em;margin-bottom:10px">Dapat notifikasi otomatis ke URL kamu saat kuota 80% & 95% terpakai.</p>
+    <input type="text" id="webhookInput" placeholder="https://kamu.com/webhook" style="width:300px">
+    <button class="btn btn-sm" onclick="setWebhook()">Set Webhook</button>
+    <button class="btn btn-sm" style="background:#666" onclick="setWebhook(true)">Matikan</button>
+    <div id="webhookResult" style="margin-top:10px;font-size:0.9em"></div>
   </div>
 
   <div id="endpoints"></div>
@@ -73,90 +101,90 @@ function saveKey() {
 // method, path, desc, params[{name, placeholder, required}], hot?
 const ENDPOINTS = [
   // --- Key ---
-  { cat: '🔑 API Key', method: 'POST', path: '/api/key/generate', desc: 'Bikin API key baru (body: {"name"})', params: [{name:'name', ph:'namakamu'}], body: true },
-  { cat: '🔑 API Key', method: 'GET', path: '/api/key/info', desc: 'Cek sisa kuota', params: [] },
+  { cat: '🔑 API Key', method: 'POST', path: '/api/key/generate', desc: 'Bikin API key baru (body: {"name"})', en: 'Create new API key (body: {"name"})', params: [{name:'name', ph:'namakamu'}], body: true },
+  { cat: '🔑 API Key', method: 'GET', path: '/api/key/info', desc: 'Cek sisa kuota', en: 'Check remaining quota', params: [] },
   // --- Islami ---
-  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/jadwal-sholat', desc: 'Jadwal sholat 7 waktu + hijriah', params: [{name:'kota', ph:'Jakarta'}], hot: true },
-  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/quran/surah', desc: 'Daftar 114 surah', params: [] },
-  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/quran/surah/{nomor}', desc: 'Ayat per surah + terjemahan', params: [{name:'nomor', ph:'1', path: true}] },
-  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/hijriah', desc: 'Tanggal hijriah hari ini', params: [] },
-  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/doa', desc: 'Doa harian', params: [] },
-  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/asmaul-husna', desc: 'Asmaul Husna', params: [] },
+  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/jadwal-sholat', desc: 'Jadwal sholat 7 waktu + hijriah', en: 'Prayer times + Hijri date', params: [{name:'kota', ph:'Jakarta'}], hot: true },
+  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/quran/surah', desc: 'Daftar 114 surah', en: 'List of 114 surahs', params: [] },
+  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/quran/surah/{nomor}', desc: 'Ayat per surah + terjemahan', en: 'Verses per surah + translation', params: [{name:'nomor', ph:'1', path: true}] },
+  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/hijriah', desc: 'Tanggal hijriah hari ini', en: 'Today's Hijri date', params: [] },
+  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/doa', desc: 'Doa harian', en: 'Daily duas', params: [] },
+  { cat: '🕌 Islami', method: 'GET', path: '/api/islami/asmaul-husna', desc: 'Asmaul Husna', en: 'Names of Allah', params: [] },
   // --- Trending ---
-  { cat: '🔥 Trending', method: 'GET', path: '/api/ai/chat', desc: 'Chat AI gratis', params: [{name:'text', ph:'halo apa kabar'}], hot: true },
-  { cat: '🔥 Trending', method: 'GET', path: '/api/ai/image', desc: 'Generate gambar AI (redirect gambar)', params: [{name:'prompt', ph:'kucing lucu'}], hot: true, img: true },
-  { cat: '🔥 Trending', method: 'GET', path: '/api/download/tiktok', desc: 'TikTok tanpa watermark + HD', params: [{name:'url', ph:'link tiktok'}], hot: true },
-  { cat: '🔥 Trending', method: 'GET', path: '/api/download/info', desc: 'Info video universal (1000+ situs)', params: [{name:'url', ph:'link video'}] },
-  { cat: '🔥 Trending', method: 'GET', path: '/api/download/yt-search', desc: 'Search YouTube + link MP4/MP3', params: [{name:'q', ph:'judul lagu'}], hot: true },
-  { cat: '🔥 Trending', method: 'GET', path: '/api/download/mp3', desc: 'Audio only', params: [{name:'url', ph:'link youtube'}] },
-  { cat: '🔥 Trending', method: 'GET', path: '/api/download/yt-thumb', desc: 'Thumbnail YouTube HD', params: [{name:'url', ph:'link youtube'}], img: true },
-  { cat: '🔥 Trending', method: 'GET', path: '/api/tools/tts', desc: 'Text to speech (audio)', params: [{name:'text', ph:'halo dunia'}, {name:'lang', ph:'id'}], img: true },
-  { cat: '🔥 Trending', method: 'GET', path: '/api/canvas/brat', desc: 'Brat meme generator', params: [{name:'text', ph:'halo'}], img: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/ai/chat', desc: 'Chat AI gratis', en: 'Free AI chat', params: [{name:'text', ph:'halo apa kabar'}], hot: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/ai/image', desc: 'Generate gambar AI (redirect gambar)', en: 'AI image generation (redirects to image)', params: [{name:'prompt', ph:'kucing lucu'}], hot: true, img: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/download/tiktok', desc: 'TikTok tanpa watermark + HD', en: 'TikTok without watermark + HD', params: [{name:'url', ph:'link tiktok'}], hot: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/download/info', desc: 'Info video universal (1000+ situs)', en: 'Universal video info (1000+ sites)', params: [{name:'url', ph:'link video'}] },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/download/yt-search', desc: 'Search YouTube + link MP4/MP3', en: 'YouTube search + MP4/MP3 links', params: [{name:'q', ph:'judul lagu'}], hot: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/download/mp3', desc: 'Audio only', en: 'Audio only', params: [{name:'url', ph:'link youtube'}] },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/download/yt-thumb', desc: 'Thumbnail YouTube HD', en: 'HD YouTube thumbnail', params: [{name:'url', ph:'link youtube'}], img: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/tools/tts', desc: 'Text to speech (audio)', en: 'Text to speech (audio)', params: [{name:'text', ph:'halo dunia'}, {name:'lang', ph:'id'}], img: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/canvas/brat', desc: 'Brat meme generator', en: 'Brat meme generator', params: [{name:'text', ph:'halo'}], img: true },
   // --- Downloader platform ---
-  { cat: '📥 Downloader', method: 'GET', path: '/api/download/youtube', desc: 'YouTube — semua format', params: [{name:'url', ph:'link youtube'}] },
-  { cat: '📥 Downloader', method: 'GET', path: '/api/download/facebook', desc: 'Facebook video', params: [{name:'url', ph:'link fb'}] },
-  { cat: '📥 Downloader', method: 'GET', path: '/api/download/instagram', desc: 'Instagram post/reel', params: [{name:'url', ph:'link ig'}] },
-  { cat: '📥 Downloader', method: 'GET', path: '/api/download/twitter', desc: 'Twitter/X video', params: [{name:'url', ph:'link twitter'}] },
-  { cat: '📥 Downloader', method: 'GET', path: '/api/download/douyin', desc: 'Douyin video', params: [{name:'url', ph:'link douyin'}] },
-  { cat: '📥 Downloader', method: 'GET', path: '/api/download/vimeo', desc: 'Vimeo', params: [{name:'url', ph:'link vimeo'}] },
-  { cat: '📥 Downloader', method: 'GET', path: '/api/download/twitch', desc: 'Twitch clip', params: [{name:'url', ph:'link twitch'}] },
-  { cat: '📥 Downloader', method: 'GET', path: '/api/download/reddit', desc: 'Reddit video', params: [{name:'url', ph:'link reddit'}] },
-  { cat: '📥 Downloader', method: 'GET', path: '/api/download/pinterest', desc: 'Pinterest', params: [{name:'url', ph:'link pin'}] },
-  { cat: '📥 Downloader', method: 'GET', path: '/api/download/dailymotion', desc: 'Dailymotion', params: [{name:'url', ph:'link'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/youtube', desc: 'YouTube — semua format', en: 'YouTube — all formats', params: [{name:'url', ph:'link youtube'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/facebook', desc: 'Facebook video', en: 'Facebook video', params: [{name:'url', ph:'link fb'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/instagram', desc: 'Instagram post/reel', en: 'Instagram post/reel', params: [{name:'url', ph:'link ig'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/twitter', desc: 'Twitter/X video', en: 'Twitter/X video', params: [{name:'url', ph:'link twitter'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/douyin', desc: 'Douyin video', en: 'Douyin video', params: [{name:'url', ph:'link douyin'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/vimeo', desc: 'Vimeo', en: 'Vimeo', params: [{name:'url', ph:'link vimeo'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/twitch', desc: 'Twitch clip', en: 'Twitch clip', params: [{name:'url', ph:'link twitch'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/reddit', desc: 'Reddit video', en: 'Reddit video', params: [{name:'url', ph:'link reddit'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/pinterest', desc: 'Pinterest', en: 'Pinterest', params: [{name:'url', ph:'link pin'}] },
+  { cat: '📥 Downloader', method: 'GET', path: '/api/download/dailymotion', desc: 'Dailymotion', en: 'Dailymotion', params: [{name:'url', ph:'link'}] },
   // --- Stalker game ---
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/ff', desc: 'Free Fire nickname', params: [{name:'id', ph:'player ID'}], hot: true },
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/ml', desc: 'Mobile Legends nickname', params: [{name:'id', ph:'player ID'}, {name:'zone', ph:'zone ID'}], hot: true },
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/gi', desc: 'Genshin Impact', params: [{name:'id', ph:'player ID'}] },
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/hsr', desc: 'Honkai Star Rail', params: [{name:'id', ph:'player ID'}] },
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/zzz', desc: 'Zenless Zone Zero', params: [{name:'id', ph:'player ID'}] },
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/valo', desc: 'Valorant', params: [{name:'id', ph:'riot ID'}] },
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/aov', desc: 'Arena of Valor', params: [{name:'id', ph:'player ID'}] },
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/codm', desc: 'COD Mobile', params: [{name:'id', ph:'player ID'}] },
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/pb', desc: 'Point Blank', params: [{name:'id', ph:'player ID'}] },
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/sausageman', desc: 'Sausage Man', params: [{name:'id', ph:'player ID'}] },
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/supersus', desc: 'Super Sus', params: [{name:'id', ph:'player ID'}] },
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/aethergazer', desc: 'Aether Gazer', params: [{name:'id', ph:'player ID'}] },
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/pgr', desc: 'Punishing Gray Raven', params: [{name:'id', ph:'player ID'}] },
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/hi3', desc: 'Honkai Impact 3rd', params: [{name:'id', ph:'player ID'}] },
-  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/lifeafter', desc: 'LifeAfter', params: [{name:'id', ph:'player ID'}, {name:'zone', ph:'server'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/ff', desc: 'Free Fire nickname', en: 'Free Fire nickname', params: [{name:'id', ph:'player ID'}], hot: true },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/ml', desc: 'Mobile Legends nickname', en: 'Mobile Legends nickname', params: [{name:'id', ph:'player ID'}, {name:'zone', ph:'zone ID'}], hot: true },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/gi', desc: 'Genshin Impact', en: 'Genshin Impact', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/hsr', desc: 'Honkai Star Rail', en: 'Honkai Star Rail', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/zzz', desc: 'Zenless Zone Zero', en: 'Zenless Zone Zero', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/valo', desc: 'Valorant', en: 'Valorant', params: [{name:'id', ph:'riot ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/aov', desc: 'Arena of Valor', en: 'Arena of Valor', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/codm', desc: 'COD Mobile', en: 'COD Mobile', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/pb', desc: 'Point Blank', en: 'Point Blank', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/sausageman', desc: 'Sausage Man', en: 'Sausage Man', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/supersus', desc: 'Super Sus', en: 'Super Sus', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/aethergazer', desc: 'Aether Gazer', en: 'Aether Gazer', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/pgr', desc: 'Punishing Gray Raven', en: 'Punishing Gray Raven', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/hi3', desc: 'Honkai Impact 3rd', en: 'Honkai Impact 3rd', params: [{name:'id', ph:'player ID'}] },
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/lifeafter', desc: 'LifeAfter', en: 'LifeAfter', params: [{name:'id', ph:'player ID'}, {name:'zone', ph:'server'}] },
   // --- Stalker sosmed/dev ---
   { cat: '🕵️ Stalker', method: 'GET', path: '/api/stalk/github', desc: 'Profil GitHub + repo terbaru', params: [{name:'username', ph:'octocat'}] },
-  { cat: '🕵️ Stalker', method: 'GET', path: '/api/github/{username}', desc: 'Info GitHub simpel', params: [{name:'username', ph:'octocat', path: true}] },
-  { cat: '🕵️ Stalker', method: 'GET', path: '/api/npm/{package}', desc: 'Info package NPM', params: [{name:'package', ph:'express', path: true}] },
+  { cat: '🕵️ Stalker', method: 'GET', path: '/api/github/{username}', desc: 'Info GitHub simpel', en: 'Simple GitHub info', params: [{name:'username', ph:'octocat', path: true}] },
+  { cat: '🕵️ Stalker', method: 'GET', path: '/api/npm/{package}', desc: 'Info package NPM', en: 'NPM package info', params: [{name:'package', ph:'express', path: true}] },
   // --- Game info ---
-  { cat: '🎮 Game Info', method: 'GET', path: '/api/game/free', desc: 'Game PC gratis', params: [] },
-  { cat: '🎮 Game Info', method: 'GET', path: '/api/game/detail/{id}', desc: 'Detail game + spek', params: [{name:'id', ph:'452', path: true}] },
+  { cat: '🎮 Game Info', method: 'GET', path: '/api/game/free', desc: 'Game PC gratis', en: 'Free PC games', params: [] },
+  { cat: '🎮 Game Info', method: 'GET', path: '/api/game/detail/{id}', desc: 'Detail game + spek', en: 'Game details + specs', params: [{name:'id', ph:'452', path: true}] },
   // --- Cuaca ---
-  { cat: '🌤️ Cuaca', method: 'GET', path: '/api/cuaca', desc: 'Cuaca kota Indonesia', params: [{name:'kota', ph:'jakarta'}] },
+  { cat: '🌤️ Cuaca', method: 'GET', path: '/api/cuaca', desc: 'Cuaca kota Indonesia', en: 'Indonesian city weather', params: [{name:'kota', ph:'jakarta'}] },
   // --- Fun ---
-  { cat: '😂 Fun', method: 'GET', path: '/api/fun/joke', desc: 'Joke random', params: [] },
-  { cat: '😂 Fun', method: 'GET', path: '/api/fun/quote', desc: 'Quote random', params: [] },
-  { cat: '😂 Fun', method: 'GET', path: '/api/fun/catfact', desc: 'Fakta kucing', params: [] },
-  { cat: '😂 Fun', method: 'GET', path: '/api/meme', desc: 'Meme Reddit', params: [] },
-  { cat: '😂 Fun', method: 'GET', path: '/api/hewan/anjing', desc: 'Foto anjing', params: [], img: true },
-  { cat: '😂 Fun', method: 'GET', path: '/api/hewan/kucing', desc: 'Foto kucing', params: [], img: true },
-  { cat: '😂 Fun', method: 'GET', path: '/api/saran', desc: 'Saran random', params: [] },
-  { cat: '😂 Fun', method: 'GET', path: '/api/aktivitas', desc: 'Ide aktivitas', params: [] },
-  { cat: '😂 Fun', method: 'GET', path: '/api/fakta-angka/{angka}', desc: 'Fakta angka', params: [{name:'angka', ph:'42', path: true}] },
+  { cat: '😂 Fun', method: 'GET', path: '/api/fun/joke', desc: 'Joke random', en: 'Random joke', params: [] },
+  { cat: '😂 Fun', method: 'GET', path: '/api/fun/quote', desc: 'Quote random', en: 'Random quote', params: [] },
+  { cat: '😂 Fun', method: 'GET', path: '/api/fun/catfact', desc: 'Fakta kucing', en: 'Cat facts', params: [] },
+  { cat: '😂 Fun', method: 'GET', path: '/api/meme', desc: 'Meme Reddit', en: 'Reddit meme', params: [] },
+  { cat: '😂 Fun', method: 'GET', path: '/api/hewan/anjing', desc: 'Foto anjing', en: 'Dog photo', params: [], img: true },
+  { cat: '😂 Fun', method: 'GET', path: '/api/hewan/kucing', desc: 'Foto kucing', en: 'Cat photo', params: [], img: true },
+  { cat: '😂 Fun', method: 'GET', path: '/api/saran', desc: 'Saran random', en: 'Random advice', params: [] },
+  { cat: '😂 Fun', method: 'GET', path: '/api/aktivitas', desc: 'Ide aktivitas', en: 'Activity ideas', params: [] },
+  { cat: '😂 Fun', method: 'GET', path: '/api/fakta-angka/{angka}', desc: 'Fakta angka', en: 'Number facts', params: [{name:'angka', ph:'42', path: true}] },
   // --- Tools ---
-  { cat: '🛠️ Tools', method: 'GET', path: '/api/tools/qrcode', desc: 'QR code (gambar)', params: [{name:'text', ph:'halo'}], img: true },
-  { cat: '🛠️ Tools', method: 'GET', path: '/api/tools/password', desc: 'Password generator', params: [{name:'length', ph:'16'}] },
-  { cat: '🛠️ Tools', method: 'GET', path: '/api/tools/base64', desc: 'Encode/decode Base64', params: [{name:'text', ph:'halo'}, {name:'mode', ph:'encode'}] },
-  { cat: '🛠️ Tools', method: 'GET', path: '/api/shortlink', desc: 'Perpendek URL', params: [{name:'url', ph:'https://...'}] },
-  { cat: '🛠️ Tools', method: 'GET', path: '/api/translate', desc: 'Translate', params: [{name:'text', ph:'halo'}, {name:'dari', ph:'id'}, {name:'ke', ph:'en'}] },
-  { cat: '🛠️ Tools', method: 'GET', path: '/api/kamus/{kata}', desc: 'Kamus Inggris', params: [{name:'kata', ph:'hello', path: true}] },
+  { cat: '🛠️ Tools', method: 'GET', path: '/api/tools/qrcode', desc: 'QR code (gambar)', en: 'QR code (image)', params: [{name:'text', ph:'halo'}], img: true },
+  { cat: '🛠️ Tools', method: 'GET', path: '/api/tools/password', desc: 'Password generator', en: 'Password generator', params: [{name:'length', ph:'16'}] },
+  { cat: '🛠️ Tools', method: 'GET', path: '/api/tools/base64', desc: 'Encode/decode Base64', en: 'Base64 encode/decode', params: [{name:'text', ph:'halo'}, {name:'mode', ph:'encode'}] },
+  { cat: '🛠️ Tools', method: 'GET', path: '/api/shortlink', desc: 'Perpendek URL', en: 'Shorten URL', params: [{name:'url', ph:'https://...'}] },
+  { cat: '🛠️ Tools', method: 'GET', path: '/api/translate', desc: 'Translate', en: 'Translate', params: [{name:'text', ph:'halo'}, {name:'dari', ph:'id'}, {name:'ke', ph:'en'}] },
+  { cat: '🛠️ Tools', method: 'GET', path: '/api/kamus/{kata}', desc: 'Kamus Inggris', en: 'English dictionary', params: [{name:'kata', ph:'hello', path: true}] },
   // --- Canvas ---
-  { cat: '🎨 Canvas', method: 'GET', path: '/api/canvas/text', desc: 'Gambar teks', params: [{name:'text', ph:'Halo'}], img: true },
-  { cat: '🎨 Canvas', method: 'GET', path: '/api/canvas/quote', desc: 'Quote aesthetic', params: [{name:'text', ph:'Semangat'}, {name:'author', ph:'Aku'}], img: true },
-  { cat: '🎨 Canvas', method: 'GET', path: '/api/canvas/welcome', desc: 'Welcome card', params: [{name:'name', ph:'Budi'}], img: true },
+  { cat: '🎨 Canvas', method: 'GET', path: '/api/canvas/text', desc: 'Gambar teks', en: 'Text image', params: [{name:'text', ph:'Halo'}], img: true },
+  { cat: '🎨 Canvas', method: 'GET', path: '/api/canvas/quote', desc: 'Quote aesthetic', en: 'Aesthetic quote', params: [{name:'text', ph:'Semangat'}, {name:'author', ph:'Aku'}], img: true },
+  { cat: '🎨 Canvas', method: 'GET', path: '/api/canvas/welcome', desc: 'Welcome card', en: 'Welcome card', params: [{name:'name', ph:'Budi'}], img: true },
   // --- Info ---
-  { cat: 'ℹ️ Info', method: 'GET', path: '/api/info/time', desc: 'Waktu server', params: [] },
-  { cat: 'ℹ️ Info', method: 'GET', path: '/api/info/echo', desc: 'Echo test', params: [{name:'msg', ph:'halo'}] },
-  { cat: 'ℹ️ Info', method: 'GET', path: '/api/crypto/harga', desc: 'Harga crypto IDR/USD', params: [{name:'coin', ph:'bitcoin'}] },
-  { cat: 'ℹ️ Info', method: 'GET', path: '/api/gempa', desc: 'Gempa BMKG terkini', params: [] },
-  { cat: 'ℹ️ Info', method: 'GET', path: '/api/random/user', desc: 'User random', params: [] },
-  { cat: 'ℹ️ Info', method: 'GET', path: '/api/tebak/umur', desc: 'Tebak umur dari nama', params: [{name:'nama', ph:'budi'}] },
-  { cat: 'ℹ️ Info', method: 'GET', path: '/api/tebak/gender', desc: 'Tebak gender dari nama', params: [{name:'nama', ph:'siti'}] },
+  { cat: 'ℹ️ Info', method: 'GET', path: '/api/info/time', desc: 'Waktu server', en: 'Server time', params: [] },
+  { cat: 'ℹ️ Info', method: 'GET', path: '/api/info/echo', desc: 'Echo test', en: 'Echo test', params: [{name:'msg', ph:'halo'}] },
+  { cat: 'ℹ️ Info', method: 'GET', path: '/api/crypto/harga', desc: 'Harga crypto IDR/USD', en: 'Crypto prices IDR/USD', params: [{name:'coin', ph:'bitcoin'}] },
+  { cat: 'ℹ️ Info', method: 'GET', path: '/api/gempa', desc: 'Gempa BMKG terkini', en: 'Latest BMKG earthquakes', params: [] },
+  { cat: 'ℹ️ Info', method: 'GET', path: '/api/random/user', desc: 'User random', en: 'Random user', params: [] },
+  { cat: 'ℹ️ Info', method: 'GET', path: '/api/tebak/umur', desc: 'Tebak umur dari nama', en: 'Guess age from name', params: [{name:'nama', ph:'budi'}] },
+  { cat: 'ℹ️ Info', method: 'GET', path: '/api/tebak/gender', desc: 'Tebak gender dari nama', en: 'Guess gender from name', params: [{name:'nama', ph:'siti'}] },
 ];
 
 let lastCat = '';
@@ -167,7 +195,7 @@ ENDPOINTS.forEach((ep, i) => {
   html += `<div class="card${ep.hot ? ' hot' : ''}" data-search="${(ep.path + ' ' + ep.desc).toLowerCase()}">
     <h3><span class="${mCls}">${ep.method}</span><code>${ep.path}</code>
       <button class="copy-btn" onclick="copyUrl(${i})">📋</button></h3>
-    <p class="desc">${ep.desc}</p>
+    <p class="desc" data-id="${ep.desc}" data-en="${ep.en || ep.desc}">${ep.desc}</p>
     <button class="btn btn-sm" onclick="toggleTest(${i})">🧪 Test</button>
     <div class="test-panel" id="tp-${i}">
       ${ep.params.map(p => p.path ? '' : `<span class="param-row"><label>${p.name}</label><input id="p-${i}-${p.name}" placeholder="${p.ph || ''}"></span>`).join('')}
@@ -286,6 +314,44 @@ function useKey(k) {
   saveKey();
   alert('Key tersimpan! Sekarang bisa test semua endpoint.');
 }
+
+async function setWebhook(off) {
+  const key = savedKey || document.getElementById('globalKey').value.trim();
+  if (!key) return alert('Isi API Key dulu di atas!');
+  const url = off ? '' : document.getElementById('webhookInput').value.trim();
+  const r = await fetch(API + '/api/key/webhook', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ webhook_url: url })
+  });
+  // Perlu apikey — kirim via query
+  const r2 = await fetch(API + '/api/key/webhook?apikey=' + encodeURIComponent(key), {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ webhook_url: url })
+  });
+  const j = await r2.json();
+  document.getElementById('webhookResult').innerHTML =
+    j.status ? `<span style="color:#22c55e">✅ ${j.message}</span>` : `<span style="color:#ef4444">❌ ${j.message}</span>`;
+}
+
+// Bahasa ID/EN
+let lang = localStorage.getItem('habibi_lang') || 'id';
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('habibi_lang', l);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  applyLang();
+}
+function applyLang() {
+  document.querySelectorAll('[data-id]').forEach(el => {
+    el.innerHTML = lang === 'id' ? el.dataset.id : (el.dataset.en || el.dataset.id);
+  });
+  document.getElementById('search').placeholder = lang === 'id'
+    ? '🔍 Cari endpoint... (misal: tiktok, sholat, ml)'
+    : '🔍 Search endpoints... (e.g.: tiktok, prayer, ml)';
+}
+// Terapkan bahasa tersimpan saat load
+applyLang();
 </script>
 </body>
 </html>

@@ -27,7 +27,41 @@ router.get('/key/info', checkKey, (req, res) => {
   });
 });
 
-// === ADMIN: upgrade/downgrade tier (butuh ADMIN_KEY di env) ===
+// === WEBHOOK: set URL notifikasi kuota ===
+router.post('/key/webhook', checkKey, (req, res) => {
+  const { webhook_url } = req.body;
+  if (webhook_url && !/^https?:\/\/.+/.test(webhook_url)) {
+    return res.status(400).json({ status: false, message: 'URL webhook tidak valid' });
+  }
+  db.run('UPDATE keys SET webhook_url = ?, webhook_80_sent = 0, webhook_95_sent = 0 WHERE key = ?',
+    [webhook_url || null, req.apiKey.key], (err) => {
+      if (err) return res.status(500).json({ status: false, message: 'Gagal' });
+      res.json({ status: true, webhook_url: webhook_url || null,
+        message: webhook_url ? 'Webhook aktif! Notifikasi dikirim saat kuota 80% & 95%.' : 'Webhook dimatikan.' });
+    });
+});
+
+// === STATISTIK PUBLIK ===
+router.get('/stats', (req, res) => {
+  db.get('SELECT COUNT(*) as total_keys FROM keys', [], (err, k) => {
+    db.get('SELECT COUNT(*) as total_req FROM logs', [], (err2, l) => {
+      db.get(`SELECT COUNT(DISTINCT DATE(created_at)) as hari_aktif FROM logs`, [], (err3, h) => {
+        db.all(`SELECT endpoint, COUNT(*) as hits FROM logs GROUP BY endpoint ORDER BY hits DESC LIMIT 10`, [], (err4, top) => {
+          db.all(`SELECT DATE(created_at) as tgl, COUNT(*) as req FROM logs WHERE created_at >= DATE('now','-7 days') GROUP BY tgl ORDER BY tgl`, [], (err5, weekly) => {
+            res.json({
+              status: true,
+              total_keys: k?.total_keys || 0,
+              total_requests: l?.total_req || 0,
+              hari_aktif: h?.hari_aktif || 0,
+              top_endpoints: (top || []).map(t => ({ endpoint: t.endpoint, hits: t.hits })),
+              seminggu_terakhir: (weekly || []).map(w => ({ tanggal: w.tgl, request: w.req })),
+            });
+          });
+        });
+      });
+    });
+  });
+});
 router.post('/admin/upgrade', (req, res) => {
   const adminKey = req.headers['x-admin-key'] || req.body.admin_key;
   if (!process.env.ADMIN_KEY || adminKey !== process.env.ADMIN_KEY) {

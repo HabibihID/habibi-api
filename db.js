@@ -10,10 +10,17 @@ db.serialize(() => {
     tier TEXT DEFAULT 'free',
     quota INTEGER DEFAULT 1000,
     used INTEGER DEFAULT 0,
+    webhook_url TEXT,
+    webhook_80_sent INTEGER DEFAULT 0,
+    webhook_95_sent INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
   // Migrasi: tambah kolom tier kalau DB lama belum punya
   db.run(`ALTER TABLE keys ADD COLUMN tier TEXT DEFAULT 'free'`, () => {});
+  // Webhook notifikasi kuota
+  db.run(`ALTER TABLE keys ADD COLUMN webhook_url TEXT`, () => {});
+  db.run(`ALTER TABLE keys ADD COLUMN webhook_80_sent INTEGER DEFAULT 0`, () => {});
+  db.run(`ALTER TABLE keys ADD COLUMN webhook_95_sent INTEGER DEFAULT 0`, () => {});
   db.run(`CREATE TABLE IF NOT EXISTS logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     key TEXT,

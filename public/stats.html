@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habibi API — Statistik</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0d0d1a; color: #e0e0e0; padding: 20px; }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { color: #a855f7; margin-bottom: 5px; }
+  h1 a { color: #a855f7; text-decoration: none; }
+  .subtitle { color: #888; margin-bottom: 25px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
+  .stat { background: #1a1a2e; border: 1px solid #a855f722; border-radius: 12px; padding: 20px; text-align: center; }
+  .stat .num { font-size: 2.2em; color: #a855f7; font-weight: bold; }
+  .stat .lbl { color: #888; margin-top: 5px; font-size: 0.9em; }
+  .card { background: #1a1a2e; border-radius: 12px; padding: 20px; margin-bottom: 15px; }
+  .card h3 { color: #a855f7; margin-bottom: 15px; }
+  .bar-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 0.9em; }
+  .bar-row .ep { width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #7dd3fc; }
+  .bar-row .bar-bg { flex: 1; background: #0d0d1a; border-radius: 4px; height: 18px; margin: 0 10px; position: relative; }
+  .bar-row .bar-fill { background: #a855f7; border-radius: 4px; height: 100%; }
+  .bar-row .hits { width: 60px; text-align: right; color: #888; }
+  .day-row { display: flex; align-items: flex-end; gap: 8px; height: 120px; margin-top: 10px; }
+  .day-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+  .day-bar { background: #a855f7; border-radius: 4px 4px 0 0; width: 100%; min-height: 4px; }
+  .day-lbl { font-size: 0.7em; color: #888; margin-top: 5px; }
+  @media (max-width: 600px) {
+    .bar-row .ep { width: 130px; font-size: 0.8em; }
+    .stat .num { font-size: 1.6em; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1><a href="/">📊 Statistik Habibi API</a></h1>
+  <p class="subtitle">Data live dari server</p>
+
+  <div class="stats">
+    <div class="stat"><div class="num" id="s-keys">-</div><div class="lbl">API Keys</div></div>
+    <div class="stat"><div class="num" id="s-req">-</div><div class="lbl">Total Request</div></div>
+    <div class="stat"><div class="num" id="s-days">-</div><div class="lbl">Hari Aktif</div></div>
+  </div>
+
+  <div class="card">
+    <h3>🔥 Endpoint Terpopuler</h3>
+    <div id="top"></div>
+  </div>
+
+  <div class="card">
+    <h3>📅 7 Hari Terakhir</h3>
+    <div class="day-row" id="weekly"></div>
+  </div>
+
+  <p style="text-align:center;color:#666;margin-top:20px"><a href="/docs" style="color:#a855f7">← Kembali ke Dokumentasi</a></p>
+</div>
+
+<script>
+fetch('/api/stats').then(r => r.json()).then(d => {
+  if (!d.status) return;
+  document.getElementById('s-keys').textContent = d.total_keys.toLocaleString('id-ID');
+  document.getElementById('s-req').textContent = d.total_requests.toLocaleString('id-ID');
+  document.getElementById('s-days').textContent = d.hari_aktif;
+
+  const max = Math.max(...d.top_endpoints.map(t => t.hits), 1);
+  document.getElementById('top').innerHTML = d.top_endpoints.map(t => `
+    <div class="bar-row">
+      <span class="ep">${t.endpoint}</span>
+      <div class="bar-bg"><div class="bar-fill" style="width:${Math.round(t.hits/max*100)}%"></div></div>
+      <span class="hits">${t.hits}</span>
+    </div>`).join('') || '<p style="color:#666">Belum ada data</p>';
+
+  const wmax = Math.max(...d.seminggu_terakhir.map(w => w.request), 1);
+  document.getElementById('weekly').innerHTML = d.seminggu_terakhir.map(w => `
+    <div class="day-col">
+      <div class="day-bar" style="height:${Math.round(w.request/wmax*100)}px" title="${w.request} request"></div>
+      <div class="day-lbl">${w.tanggal.slice(5)}</div>
+    </div>`).join('') || '<p style="color:#666">Belum ada data</p>';
+});
+</script>
+</body>
+</html>
