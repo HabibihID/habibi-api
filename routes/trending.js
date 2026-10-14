@@ -77,13 +77,15 @@ router.get('/canvas/brat', checkKey, async (req, res) => {
   const raw = (req.query.text || 'brat').replace(/[<>&]/g, '').substring(0, 60);
   const format = (req.query.format || 'webp').toLowerCase();
   // Gaya brat ala bot: background putih, teks hitam BOLD Arial, kiri atas
-  // Multi-baris pakai | sebagai pemisah, misal: ?text=just friend|kok|cemburu
-  const lines = raw.split('|').slice(0, 4);
+  // Otomatis wrap per kata kalau ada spasi; pakai | buat baris baru manual
   const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // Tiap kata jadi baris baru otomatis (kayak bot lain); | juga bisa buat paksa baris baru
+  const words = raw.replace(/\|/g, ' ').split(' ').filter(w => w);
+  const finalLines = words.slice(0, 5);
   const fontSize = 88;
   const lineH = 98;
   const startY = 105;
-  const textEls = lines.map((ln, i) =>
+  const textEls = finalLines.map((ln, i) =>
     `    <text x="28" y="${startY + i * lineH}" font-family="Arial,Helvetica,sans-serif" font-size="${fontSize}" font-weight="900" fill="#000000" filter="url(#b)">${esc(ln)}</text>`
   ).join('\n');
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
@@ -103,9 +105,21 @@ ${textEls}
 
 // ============ 🎬 BRATVID (animasi) ============
 router.get('/canvas/bratvid', checkKey, async (req, res) => {
-  const raw = (req.query.text || 'brat').replace(/[<>&]/g, '').substring(0, 40);
-  const lines = raw.split('|').slice(0, 3);
+  const raw = (req.query.text || 'brat').replace(/[<>&]/g, '').substring(0, 60);
   const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const MAX_CHARS = 12;
+  const lines = [];
+  for (const seg of raw.split('|')) {
+    let cur = '';
+    for (const word of seg.split(' ')) {
+      if ((cur + ' ' + word).trim().length > MAX_CHARS && cur.trim()) {
+        lines.push(cur.trim()); cur = word;
+      } else { cur = cur + ' ' + word; }
+    }
+    if (cur.trim()) lines.push(cur.trim());
+    if (lines.length >= 5) break;
+  }
+  const finalLines = lines.slice(0, 5);
   const fontSize = 88, lineH = 98, startY = 105;
   const sharp = require('sharp');
   const { execSync } = require('child_process');
@@ -121,7 +135,7 @@ router.get('/canvas/bratvid', checkKey, async (req, res) => {
       // Ease-out: cepat di awal, melambat
       const ease = 1 - Math.pow(1 - progress, 3);
       const offsetX = Math.round(-400 * (1 - ease)); // dari -400 ke 0
-      const textEls = lines.map((ln, i) =>
+      const textEls = finalLines.map((ln, i) =>
         `    <text x="${30 + offsetX}" y="${startY + i * lineH}" font-family="Arial,Helvetica,sans-serif" font-size="${fontSize}" font-weight="900" fill="#000000">${esc(ln)}</text>`
       ).join('\n');
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
