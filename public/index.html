@@ -193,7 +193,8 @@ const ENDPOINTS = [
   { cat: '🔥 Trending', method: 'GET', path: '/api/download/mp3', desc: 'Audio only', en: 'Audio only', params: [{name:'url', ph:'link youtube'}] },
   { cat: '🔥 Trending', method: 'GET', path: '/api/download/yt-thumb', desc: 'Thumbnail YouTube HD', en: 'HD YouTube thumbnail', params: [{name:'url', ph:'link youtube'}], img: true },
   { cat: '🔥 Trending', method: 'GET', path: '/api/tools/tts', desc: 'Text to speech (audio)', en: 'Text to speech (audio)', params: [{name:'text', ph:'halo dunia'}, {name:'lang', ph:'id'}], img: true },
-  { cat: '🔥 Trending', method: 'GET', path: '/api/canvas/brat', desc: 'Brat meme generator', en: 'Brat meme generator', params: [{name:'text', ph:'halo'}], img: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/canvas/brat', desc: 'Brat meme generator (WebP stiker, multi-baris pakai |)', en: 'Brat meme generator (WebP sticker, multi-line with |)', params: [{name:'text', ph:'just friend|kok|cemburu'}], img: true },
+  { cat: '🔥 Trending', method: 'GET', path: '/api/canvas/bratvid', desc: 'Bratvid — brat versi animasi (MP4)', en: 'Bratvid — animated brat (MP4)', params: [{name:'text', ph:'just friend|kok|cemburu'}], video: true },
   // --- Maker ---
   { cat: '🛠️ Maker', method: 'GET', path: '/api/maker/ttp', desc: 'Text to picture (custom warna)', en: 'Text to picture (custom colors)', params: [{name:'text', ph:'Halo'}, {name:'bg', ph:'a855f7'}, {name:'fg', ph:'ffffff'}], img: true, hot: true },
   { cat: '🛠️ Maker', method: 'GET', path: '/api/maker/attp', desc: 'Animasi teks (buat stiker)', en: 'Animated text (for stickers)', params: [{name:'text', ph:'Halo'}], img: true },
@@ -357,12 +358,15 @@ async function runTest(i) {
     const ct = r.headers.get('content-type') || '';
     const isImage = ct.startsWith('image/');
     const isAudio = ct.startsWith('audio/');
+    const isVideo = ct.startsWith('video/');
     if (r.ok && isImage) {
       // Gambar valid → tampilkan
       respEl.innerHTML = '';
       const img = document.createElement('img');
       img.src = url; img.style.maxWidth = '100%'; img.style.borderRadius = '8px';
       respEl.appendChild(img);
+    } else if (r.ok && isVideo) {
+      respEl.innerHTML = `<video controls autoplay loop src="${url}" style="max-width:100%;border-radius:8px"></video>`;
     } else if (r.ok && (isAudio || url.includes('/tts'))) {
       respEl.innerHTML = `<audio controls src="${url}" style="width:100%"></audio>`;
     } else {

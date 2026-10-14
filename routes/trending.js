@@ -101,6 +101,51 @@ ${textEls}
   }
 });
 
+// ============ 🎬 BRATVID (animasi) ============
+router.get('/canvas/bratvid', checkKey, async (req, res) => {
+  const raw = (req.query.text || 'brat').replace(/[<>&]/g, '').substring(0, 40);
+  const lines = raw.split('|').slice(0, 3);
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const fontSize = 110, lineH = 125, startY = 130;
+  const sharp = require('sharp');
+  const { execSync } = require('child_process');
+  const fs = require('fs');
+  const path = require('path');
+  const tmpdir = fs.mkdtempSync('/tmp/bratvid-');
+
+  try {
+    // 12 frame: teks slide dari kiri + bounce
+    const frames = 12;
+    for (let f = 0; f < frames; f++) {
+      const progress = f / (frames - 1); // 0..1
+      // Ease-out: cepat di awal, melambat
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const offsetX = Math.round(-400 * (1 - ease)); // dari -400 ke 0
+      const textEls = lines.map((ln, i) =>
+        `    <text x="${30 + offsetX}" y="${startY + i * lineH}" font-family="Arial,Helvetica,sans-serif" font-size="${fontSize}" font-weight="900" fill="#000000">${esc(ln)}</text>`
+      ).join('\n');
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
+        <rect width="512" height="512" fill="#FFFFFF"/>
+${textEls}
+      </svg>`;
+      const pngBuf = await sharp(Buffer.from(svg)).png().toBuffer();
+      fs.writeFileSync(path.join(tmpdir, `f${String(f).padStart(3, '0')}.png`), pngBuf);
+    }
+    // Gabung jadi MP4 pakai ffmpeg
+    const outPath = path.join(tmpdir, 'out.mp4');
+    execSync(`ffmpeg -y -framerate 12 -i "${tmpdir}/f%03d.png" -c:v libx264 -pix_fmt yuv420p -vf "scale=512:512" "${outPath}" 2>/dev/null`, { timeout: 30000 });
+    const video = fs.readFileSync(outPath);
+    // Bersihkan
+    fs.rmSync(tmpdir, { recursive: true, force: true });
+    res.set('Content-Type', 'video/mp4');
+    res.set('Content-Disposition', 'inline; filename="bratvid.mp4"');
+    res.send(video);
+  } catch (e) {
+    try { fs.rmSync(tmpdir, { recursive: true, force: true }); } catch (_) {}
+    res.status(500).json({ status: false, message: 'Gagal bikin bratvid: ' + e.message });
+  }
+});
+
 // ============ 🖼️ YOUTUBE THUMBNAIL ============
 router.get('/download/yt-thumb', checkKey, (req, res) => {
   const url = req.query.url || '';
