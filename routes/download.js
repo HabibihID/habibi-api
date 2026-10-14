@@ -6,12 +6,23 @@
 //  4. URL divalidasi + SSRF guard (tolak localhost/IP privat)
 const express = require('express');
 const crypto = require('crypto');
+const https = require('https');
 const { execFile } = require('child_process');
 const db = require('../db');
 const { checkKey } = require('../middleware/apikey');
 
 const router = express.Router();
 const CACHE_TTL = 3600; // 1 jam — URL sama tidak hit layanan luar lagi
+
+function fetchJSON(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, { headers: { 'User-Agent': 'HabibiAPI/1.0' } }, (res) => {
+      let d = '';
+      res.on('data', c => d += c);
+      res.on('end', () => { try { resolve(JSON.parse(d)); } catch (e) { reject(e); } });
+    }).on('error', reject);
+  });
+}
 
 const UA_POOL = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
@@ -209,7 +220,29 @@ router.get('/download/yt-search', checkKey, (req, res) => {
   });
 });
 
-// ============ 🎵 MP3 (audio only) ============
+// ============ 🕵️ STALKER ============
+// Catatan: YouTube channel stalk dihapus — YouTube memblokir akses bot ke halaman channel.
+// TikTok/IG stalk juga tidak ada API gratis yang stabil saat ini.
+
+// GitHub Stalk (lengkap)
+router.get('/stalk/github', checkKey, async (req, res) => {
+  const username = req.query.username;
+  if (!username) return res.status(400).json({ status: false, message: 'Kirim ?username=' });
+  try {
+    const [u, repos] = await Promise.all([
+      fetchJSON(`https://api.github.com/users/${encodeURIComponent(username)}`),
+      fetchJSON(`https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=5&sort=updated`),
+    ]);
+    res.json({
+      status: true,
+      username: u.login, nama: u.name, bio: u.bio,
+      avatar: u.avatar_url, lokasi: u.location, blog: u.blog,
+      repos: u.public_repos, followers: u.followers, following: u.following,
+      dibuat: u.created_at?.substring(0, 10),
+      repo_terbaru: repos.map(r => ({ nama: r.name, bahasa: r.language, stars: r.stargazers_count })),
+    });
+  } catch (e) { res.status(404).json({ status: false, message: 'User tidak ditemukan' }); }
+});
 router.get('/download/mp3', checkKey, (req, res) => {
   const url = (req.query.url || '').trim();
   if (!url) return res.status(400).json({ status: false, message: 'Kirim ?url=link_video' });
