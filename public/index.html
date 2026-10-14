@@ -86,6 +86,77 @@
     <div id="webhookResult" style="margin-top:10px;font-size:0.9em"></div>
   </div>
 
+  <div class="key-card" style="border-color:#22c55e">
+    <h3 style="color:#22c55e;margin-bottom:10px">🤖 Cara Pakai di Bot / Script</h3>
+    <p style="color:#888;font-size:0.9em;margin-bottom:10px">REST API standar — bisa dipakai di Node.js, Python, PHP, dll. Tinggal fetch URL + <code>apikey</code>.</p>
+    <div style="margin-bottom:10px">
+      <button class="lang-btn active" onclick="showCode('node',event)">Node.js</button>
+      <button class="lang-btn" onclick="showCode('py',event)">Python</button>
+      <button class="lang-btn" onclick="showCode('php',event)">PHP</button>
+    </div>
+    <pre id="code-node" style="background:#0d0d1a;padding:15px;border-radius:8px;overflow-x:auto;font-size:0.8em"><code>const APIKEY = 'KEY_KAMU';
+const BASE = 'https://apiku.habibihcloud.eu.cc';
+
+// Contoh: download TikTok
+async function tiktok(url) {
+  const r = await fetch(`${BASE}/api/download/tiktok?url=${encodeURIComponent(url)}&apikey=${APIKEY}`);
+  const j = await r.json();
+  return j.data.play; // link video no-watermark
+}
+
+// Contoh: stalker ML
+async function stalkML(id, zone) {
+  const r = await fetch(`${BASE}/api/stalk/ml?id=${id}&zone=${zone}&apikey=${APIKEY}`);
+  const j = await r.json();
+  return j.nickname;
+}
+
+// Contoh: jadwal sholat
+async function sholat(kota) {
+  const r = await fetch(`${BASE}/api/islami/jadwal-sholat?kota=${kota}&apikey=${APIKEY}`);
+  return await r.json();
+}</code></pre>
+    <pre id="code-py" style="display:none;background:#0d0d1a;padding:15px;border-radius:8px;overflow-x:auto;font-size:0.8em"><code>import requests
+
+APIKEY = 'KEY_KAMU'
+BASE = 'https://apiku.habibihcloud.eu.cc'
+
+# Download TikTok
+def tiktok(url):
+    r = requests.get(f"{BASE}/api/download/tiktok", params={'url': url, 'apikey': APIKEY})
+    return r.json()['data']['play']
+
+# Stalker ML
+def stalk_ml(id, zone):
+    r = requests.get(f"{BASE}/api/stalk/ml", params={'id': id, 'zone': zone, 'apikey': APIKEY})
+    return r.json()['nickname']
+
+# Jadwal sholat
+def sholat(kota):
+    r = requests.get(f"{BASE}/api/islami/jadwal-sholat", params={'kota': kota, 'apikey': APIKEY})
+    return r.json()</code></pre>
+    <pre id="code-php" style="display:none;background:#0d0d1a;padding:15px;border-radius:8px;overflow-x:auto;font-size:0.8em"><code>&lt;?php
+$apikey = 'KEY_KAMU';
+$base = 'https://apiku.habibihcloud.eu.cc';
+
+// Download TikTok
+function tiktok($url) {
+    global $apikey, $base;
+    $q = http_build_query(['url' => $url, 'apikey' => $apikey]);
+    $j = json_decode(file_get_contents("$base/api/download/tiktok?$q"), true);
+    return $j['data']['play'];
+}
+
+// Stalker ML
+function stalk_ml($id, $zone) {
+    global $apikey, $base;
+    $q = http_build_query(['id' => $id, 'zone' => $zone, 'apikey' => $apikey]);
+    $j = json_decode(file_get_contents("$base/api/stalk/ml?$q"), true);
+    return $j['nickname'];
+}
+?&gt;</code></pre>
+  </div>
+
   <div id="endpoints"></div>
 </div>
 
@@ -344,6 +415,18 @@ async function setWebhook(off) {
   const j = await r.json();
   document.getElementById('webhookResult').innerHTML =
     j.status ? `<span style="color:#22c55e">✅ ${j.message}</span>` : `<span style="color:#ef4444">❌ ${j.message}</span>`;
+}
+
+// Tab kode integrasi
+function showCode(lang, event) {
+  ['node', 'py', 'php'].forEach(l => {
+    document.getElementById('code-' + l).style.display = l === lang ? 'block' : 'none';
+  });
+  if (event && event.target) {
+    const btns = event.target.parentElement.querySelectorAll('.lang-btn');
+    btns.forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+  }
 }
 
 // Bahasa ID/EN

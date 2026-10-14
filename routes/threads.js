@@ -127,4 +127,7 @@ router.get('/download/threads', checkKey, async (req, res) => {
   });
 });
 
+// TikTok search DIHAPUS — TikTok block IP datacenter bahkan via browser asli.
+// Beda sama Threads yang masih bisa dibuka tanpa login.
+// Solusi: pakai proxy residensial (user punya proxy tambahan di API lama).
 module.exports = router;
