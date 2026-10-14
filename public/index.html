@@ -132,6 +132,7 @@ const ENDPOINTS = [
   { cat: '📥 Downloader', method: 'GET', path: '/api/download/pinterest', desc: 'Pinterest', en: 'Pinterest', params: [{name:'url', ph:'link pin'}] },
   { cat: '📥 Downloader', method: 'GET', path: '/api/download/dailymotion', desc: 'Dailymotion', en: 'Dailymotion', params: [{name:'url', ph:'link'}] },
   // --- Stalker game ---
+  { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/roblox', desc: 'Profil Roblox (username)', en: 'Roblox profile (username)', params: [{name:'username', ph:'Roblox'}], hot: true },
   { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/ff', desc: 'Free Fire nickname', en: 'Free Fire nickname', params: [{name:'id', ph:'player ID'}], hot: true },
   { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/ml', desc: 'Mobile Legends nickname', en: 'Mobile Legends nickname', params: [{name:'id', ph:'player ID'}, {name:'zone', ph:'zone ID'}], hot: true },
   { cat: '🎮 Stalker Game', method: 'GET', path: '/api/stalk/gi', desc: 'Genshin Impact', en: 'Genshin Impact', params: [{name:'id', ph:'player ID'}] },

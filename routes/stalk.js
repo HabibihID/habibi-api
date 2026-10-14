@@ -49,4 +49,43 @@ router.get('/stalk/pgr', checkKey, gameStalk('pgr'));                  // Punish
 router.get('/stalk/lifeafter', checkKey, gameStalk('la', true));       // LifeAfter (+zone)
 router.get('/stalk/hi3', checkKey, gameStalk('hi'));                   // Honkai Impact 3rd
 
+// ============ 🟥 ROBLOX STALKER ============
+// Pakai official Roblox API (gratis, tanpa key)
+router.get('/stalk/roblox', checkKey, async (req, res) => {
+  const username = (req.query.username || '').trim();
+  if (!username) return res.status(400).json({ status: false, message: 'Kirim ?username=NAMA_ROBLOX' });
+  try {
+    // 1. Cari user ID dari username
+    const lookup = await fetch(`https://users.roblox.com/v1/usernames/users`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usernames: [username], excludeBannedUsers: false }),
+    }).then(r => r.json());
+    const user = lookup.data && lookup.data[0];
+    if (!user) return res.status(404).json({ status: false, message: 'Username tidak ditemukan' });
+
+    // 2. Ambil detail profil + avatar + status (paralel)
+    const [detail, avatar, friends] = await Promise.all([
+      fetch(`https://users.roblox.com/v1/users/${user.id}`).then(r => r.json()),
+      fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${user.id}&size=180x180&format=Png&isCircular=false`).then(r => r.json()).catch(() => ({})),
+      fetch(`https://friends.roblox.com/v1/users/${user.id}/friends/count`).then(r => r.json()).catch(() => ({})),
+    ]);
+    res.json({
+      status: true,
+      id: user.id,
+      username: user.name,
+      display_name: user.displayName,
+      verified_badge: !!user.hasVerifiedBadge,
+      bio: detail.description || '',
+      dibuat: detail.created ? detail.created.substring(0, 10) : null,
+      banned: !!detail.isBanned,
+      jumlah_teman: friends.count ?? null,
+      avatar: avatar.data && avatar.data[0] ? avatar.data[0].imageUrl : null,
+      profil: `https://www.roblox.com/users/${user.id}/profile`,
+    });
+  } catch (e) {
+    res.status(500).json({ status: false, message: 'Gagal ambil data Roblox' });
+  }
+});
+
 module.exports = router;
