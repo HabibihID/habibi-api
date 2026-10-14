@@ -74,15 +74,22 @@ router.get('/tools/tts', checkKey, (req, res) => {
 
 // ============ 🟢 BRAT MAKER (meme trending!) ============
 router.get('/canvas/brat', checkKey, async (req, res) => {
-  const text = (req.query.text || 'brat').replace(/[<>&]/g, '').substring(0, 30);
+  const raw = (req.query.text || 'brat').replace(/[<>&]/g, '').substring(0, 60);
   const format = (req.query.format || 'webp').toLowerCase();
-  // Gaya brat ala bot: background putih, teks hitam Arial di atas, blur halus
-  // Pakai <text> murni (bukan foreignObject) biar bisa dirender sharp
-  const esc = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // Gaya brat ala bot: background putih, teks hitam BOLD Arial, kiri atas
+  // Multi-baris pakai | sebagai pemisah, misal: ?text=just friend|kok|cemburu
+  const lines = raw.split('|').slice(0, 4);
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const fontSize = 110;
+  const lineH = 125;
+  const startY = 130;
+  const textEls = lines.map((ln, i) =>
+    `    <text x="30" y="${startY + i * lineH}" font-family="Arial,Helvetica,sans-serif" font-size="${fontSize}" font-weight="900" fill="#000000" filter="url(#b)">${esc(ln)}</text>`
+  ).join('\n');
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
-    <defs><filter id="b"><feGaussianBlur stdDeviation="1.5"/></filter></defs>
+    <defs><filter id="b"><feGaussianBlur stdDeviation="1.2"/></filter></defs>
     <rect width="512" height="512" fill="#FFFFFF"/>
-    <text x="30" y="150" font-family="Arial,Helvetica,sans-serif" font-size="130" fill="#000000" filter="url(#b)">${esc}</text>
+${textEls}
   </svg>`;
   if (format === 'svg') return res.set('Content-Type', 'image/svg+xml').send(svg);
   try {
