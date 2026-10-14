@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habibi API — Dokumentasi</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0d0d1a; color: #e0e0e0; padding: 20px; }
+  .container { max-width: 800px; margin: 0 auto; }
+  h1 { color: #a855f7; font-size: 2em; margin-bottom: 5px; }
+  .subtitle { color: #888; margin-bottom: 30px; }
+  .card { background: #1a1a2e; border: 1px solid #a855f722; border-radius: 12px; padding: 20px; margin-bottom: 15px; }
+  .card h3 { color: #a855f7; margin-bottom: 10px; }
+  code { background: #0d0d1a; padding: 3px 8px; border-radius: 6px; color: #7dd3fc; font-size: 0.9em; }
+  .method { display: inline-block; background: #22c55e; color: #000; font-weight: bold; padding: 2px 10px; border-radius: 6px; font-size: 0.8em; margin-right: 8px; }
+  .method.post { background: #f59e0b; }
+  pre { background: #0d0d1a; padding: 15px; border-radius: 8px; overflow-x: auto; margin-top: 10px; font-size: 0.85em; }
+  .btn { display: inline-block; background: #a855f7; color: #fff; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: bold; margin-top: 10px; cursor: pointer; border: none; font-size: 1em; }
+  input { background: #0d0d1a; border: 1px solid #a855f744; color: #fff; padding: 10px 15px; border-radius: 8px; width: 250px; margin-right: 10px; }
+  #keyResult { margin-top: 15px; word-break: break-all; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🚀 Habibi API</h1>
+  <p class="subtitle">REST API cepat & stabil — gratis 1000 request</p>
+
+  <div class="card">
+    <h3>🔑 Dapatkan API Key</h3>
+    <input type="text" id="nameInput" placeholder="Nama kamu">
+    <button class="btn" onclick="genKey()">Generate Key</button>
+    <div id="keyResult"></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="method post">POST</span> <code>/api/key/generate</code></h3>
+    <p>Body: <code>{"name": "namakamu"}</code></p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/key/info?apikey=KEY</code></h3>
+    <p>Cek sisa kuota API key kamu.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/canvas/text?text=Halo&apikey=KEY</code></h3>
+    <p>Bikin gambar teks (SVG). Contoh aman tanpa panggil layanan luar.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/download/info?url=LINK&apikey=KEY</code></h3>
+    <p>Ambil info video TikTok/YouTube/IG (judul, thumbnail, link download langsung). Hasil di-cache 1 jam biar IP server awet.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/info/time?apikey=KEY</code></h3>
+    <p>Dapatkan waktu server.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/info/echo?msg=halo&apikey=KEY</code></h3>
+    <p>Echo test.</p>
+  </div>
+
+  <h2 style="color:#a855f7;margin:25px 0 15px">🕌 Kategori Islami</h2>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/islami/jadwal-sholat?kota=Jakarta&apikey=KEY</code></h3>
+    <p>Jadwal sholat 7 waktu + tanggal hijriah.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/islami/quran/surah?apikey=KEY</code></h3>
+    <p>Daftar 114 surah Al-Quran.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/islami/quran/surah/1?apikey=KEY</code></h3>
+    <p>Ayat per surah (arab + latin + terjemahan). Ganti 1 dengan nomor surah.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/islami/hijriah?apikey=KEY</code></h3>
+    <p>Tanggal hijriah hari ini.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/islami/doa?apikey=KEY</code></h3>
+    <p>Kumpulan doa harian (data lokal, cepat).</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/islami/asmaul-husna?apikey=KEY</code></h3>
+    <p>Asmaul Husna (data lokal, cepat).</p>
+  </div>
+
+  <h2 style="color:#a855f7;margin:25px 0 15px">🎮 Game</h2>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/game/free?apikey=KEY</code></h3>
+    <p>Daftar game PC gratis.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/game/detail/452?apikey=KEY</code></h3>
+    <p>Detail game + spesifikasi minimum.</p>
+  </div>
+
+  <h2 style="color:#a855f7;margin:25px 0 15px">🌤️ Cuaca</h2>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/cuaca?kota=jakarta&apikey=KEY</code></h3>
+    <p>Cuaca kota Indonesia (jakarta, bandung, surabaya, medan, semarang, makassar, denpasar, yogyakarta).</p>
+  </div>
+
+  <h2 style="color:#a855f7;margin:25px 0 15px">😂 Fun</h2>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/fun/joke?apikey=KEY</code></h3>
+    <p>Joke random bahasa Inggris.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/fun/quote?apikey=KEY</code></h3>
+    <p>Quote random + author.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/fun/catfact?apikey=KEY</code></h3>
+    <p>Fakta random tentang kucing.</p>
+  </div>
+
+  <h2 style="color:#a855f7;margin:25px 0 15px">🛠️ Tools</h2>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/tools/qrcode?text=halo&apikey=KEY</code></h3>
+    <p>Generate QR code (balikin gambar).</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/tools/password?length=16&apikey=KEY</code></h3>
+    <p>Generate password aman.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/tools/base64?text=halo&mode=encode&apikey=KEY</code></h3>
+    <p>Encode/decode Base64.</p>
+  </div>
+
+  <h2 style="color:#a855f7;margin:25px 0 15px">🎨 Canvas</h2>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/canvas/text?text=Halo&apikey=KEY</code></h3>
+    <p>Gambar teks simpel.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/canvas/quote?text=Semangat&author=Aku&apikey=KEY</code></h3>
+    <p>Gambar quote aesthetic.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/canvas/welcome?name=Budi&apikey=KEY</code></h3>
+    <p>Welcome card member baru.</p>
+  </div>
+
+  <h2 style="color:#a855f7;margin:25px 0 15px">💰 Crypto & Info</h2>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/crypto/harga?coin=bitcoin&apikey=KEY</code></h3>
+    <p>Harga crypto dalam IDR & USD.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/gempa?apikey=KEY</code></h3>
+    <p>Gempa terkini dari BMKG.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/translate?text=halo&dari=id&ke=en&apikey=KEY</code></h3>
+    <p>Translate antar bahasa.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/kamus/hello?apikey=KEY</code></h3>
+    <p>Kamus bahasa Inggris + contoh.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/meme?apikey=KEY</code></h3>
+    <p>Meme random dari Reddit.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/hewan/anjing?apikey=KEY</code></h3>
+    <p>Foto anjing random. Ganti <code>anjing</code> dengan <code>kucing</code>.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/saran?apikey=KEY</code></h3>
+    <p>Saran random bahasa Inggris.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/fakta-angka/42?apikey=KEY</code></h3>
+    <p>Fakta menarik tentang angka.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/random/user?apikey=KEY</code></h3>
+    <p>Data user random + foto.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/tebak/umur?nama=budi&apikey=KEY</code></h3>
+    <p>Tebak umur dari nama. Ganti <code>umur</code> dengan <code>gender</code>.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/npm/express?apikey=KEY</code></h3>
+    <p>Info package NPM.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/github/octocat?apikey=KEY</code></h3>
+    <p>Info user GitHub.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/shortlink?url=https://google.com&apikey=KEY</code></h3>
+    <p>Perpendek URL.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method">GET</span> <code>/api/aktivitas?apikey=KEY</code></h3>
+    <p>Ide aktivitas random.</p>
+  </div>
+</div>
+
+<script>
+async function genKey() {
+  const name = document.getElementById('nameInput').value || 'user';
+  const r = await fetch('/api/key/generate', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({name})
+  });
+  const j = await r.json();
+  document.getElementById('keyResult').innerHTML =
+    j.status ? `<code style="font-size:1.1em">${j.apikey}</code><p style="margin-top:8px;color:#888">Simpan! Kuota: ${j.quota}</p>`
+              : `<p style="color:red">${j.message}</p>`;
+}
+</script>
+</body>
+</html>
