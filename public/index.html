@@ -355,12 +355,15 @@ async function runTest(i) {
     if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
     const r = await fetch(url, opts);
     const ct = r.headers.get('content-type') || '';
-    if (ep.img || ct.startsWith('image/')) {
+    const isImage = ct.startsWith('image/');
+    const isAudio = ct.startsWith('audio/');
+    if (r.ok && isImage) {
+      // Gambar valid → tampilkan
       respEl.innerHTML = '';
       const img = document.createElement('img');
       img.src = url; img.style.maxWidth = '100%'; img.style.borderRadius = '8px';
       respEl.appendChild(img);
-    } else if (ct.includes('audio') || url.includes('/tts')) {
+    } else if (r.ok && (isAudio || url.includes('/tts'))) {
       respEl.innerHTML = `<audio controls src="${url}" style="width:100%"></audio>`;
     } else {
       const t = await r.text();
