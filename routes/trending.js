@@ -80,14 +80,14 @@ router.get('/canvas/brat', checkKey, async (req, res) => {
   // Multi-baris pakai | sebagai pemisah, misal: ?text=just friend|kok|cemburu
   const lines = raw.split('|').slice(0, 4);
   const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const fontSize = 110;
-  const lineH = 125;
-  const startY = 130;
+  const fontSize = 88;
+  const lineH = 98;
+  const startY = 105;
   const textEls = lines.map((ln, i) =>
-    `    <text x="30" y="${startY + i * lineH}" font-family="Arial,Helvetica,sans-serif" font-size="${fontSize}" font-weight="900" fill="#000000" filter="url(#b)">${esc(ln)}</text>`
+    `    <text x="28" y="${startY + i * lineH}" font-family="Arial,Helvetica,sans-serif" font-size="${fontSize}" font-weight="900" fill="#000000" filter="url(#b)">${esc(ln)}</text>`
   ).join('\n');
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
-    <defs><filter id="b"><feGaussianBlur stdDeviation="1.2"/></filter></defs>
+    <defs><filter id="b"><feGaussianBlur stdDeviation="1"/></filter></defs>
     <rect width="512" height="512" fill="#FFFFFF"/>
 ${textEls}
   </svg>`;
@@ -106,7 +106,7 @@ router.get('/canvas/bratvid', checkKey, async (req, res) => {
   const raw = (req.query.text || 'brat').replace(/[<>&]/g, '').substring(0, 40);
   const lines = raw.split('|').slice(0, 3);
   const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const fontSize = 110, lineH = 125, startY = 130;
+  const fontSize = 88, lineH = 98, startY = 105;
   const sharp = require('sharp');
   const { execSync } = require('child_process');
   const fs = require('fs');
