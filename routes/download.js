@@ -125,6 +125,87 @@ const PLATFORMS = {
   capcut:    { name: 'CapCut',    match: /(capcut\.com)/ },
 };
 
+// ============ 📁 MEDIAFIRE DOWNLOADER ============
+// MediaFire punya API publik untuk info file + direct link via scraping
+router.get('/download/mediafire', checkKey, async (req, res) => {
+  const url = (req.query.url || '').trim();
+  if (!url) return res.status(400).json({ status: false, message: 'Kirim ?url=link_mediafire' });
+  if (!/mediafire\.com/i.test(url)) return res.status(400).json({ status: false, message: 'URL bukan MediaFire' });
+
+  // Ambil quick_key dari URL: mediafire.com/file/KEY/nama
+  const keyMatch = url.match(/mediafire\.com\/file\/([a-z0-9]+)/i);
+  if (!keyMatch) return res.status(400).json({ status: false, message: 'Link MediaFire tidak valid' });
+  const quickKey = keyMatch[1];
+
+  const hash = 'mf_' + crypto.createHash('sha256').update(url).digest('hex');
+  const now = Math.floor(Date.now() / 1000);
+
+  db.get('SELECT data, created_at FROM dl_cache WHERE url_hash = ?', [hash], async (err, row) => {
+    if (row && (now - row.created_at) < CACHE_TTL) {
+      const data = JSON.parse(row.data);
+      data.cached = true;
+      return res.json(data);
+    }
+    try {
+      // 1. Info file via API publik
+      const info = await new Promise((resolve, reject) => {
+        https.get(`https://www.mediafire.com/api/file/get_info.php?quick_key=${quickKey}&response_format=json`,
+          { headers: { 'User-Agent': UA_POOL[0] } }, (r) => {
+            let d = ''; r.on('data', c => d += c);
+            r.on('end', () => { try { resolve(JSON.parse(d)); } catch { reject(new Error('Gagal')); } });
+          }).on('error', reject);
+      });
+
+      const fileInfo = info.response && info.response.file_info;
+      if (!fileInfo) return res.status(404).json({ status: false, message: 'File tidak ditemukan' });
+
+      // 2. Direct link via get_link API
+      const linkData = await new Promise((resolve, reject) => {
+        https.get(`https://www.mediafire.com/api/file/get_links.php?quick_key=${quickKey}&response_format=json`,
+          { headers: { 'User-Agent': UA_POOL[0] } }, (r) => {
+            let d = ''; r.on('data', c => d += c);
+            r.on('end', () => { try { resolve(JSON.parse(d)); } catch { resolve({}); } });
+          }).on('error', () => resolve({}));
+      });
+
+      let directLink = null;
+      try {
+        const links = linkData.response && linkData.response.links;
+        if (links && links[0] && links[0].normal_download) {
+          directLink = links[0].normal_download;
+        }
+      } catch {}
+
+      // 3. Fallback: scrape halaman download
+      if (!directLink) {
+        const pageHtml = await new Promise((resolve, reject) => {
+          https.get(url, { headers: { 'User-Agent': UA_POOL[0] } }, (r) => {
+            let d = ''; r.on('data', c => d += c);
+            r.on('end', () => resolve(d));
+          }).on('error', () => resolve(''));
+        });
+        const dlMatch = pageHtml.match(/https:\/\/download\d+\.mediafire\.com[^"'\s\\]+/);
+        if (dlMatch) directLink = dlMatch[0].replace(/\\/g, '');
+      }
+
+      const out = {
+        status: true, cached: false, platform: 'MediaFire',
+        nama_file: fileInfo.filename,
+        ukuran: fileInfo.size ? (parseInt(fileInfo.size) / 1024 / 1024).toFixed(2) + ' MB' : null,
+        tipe: fileInfo.mimetype,
+        tanggal_upload: fileInfo.created,
+        download: directLink,
+        note: directLink ? null : 'Direct link tidak ketemu, buka manual: ' + url,
+      };
+      db.run('INSERT OR REPLACE INTO dl_cache (url_hash, data, created_at) VALUES (?, ?, ?)',
+        [hash, JSON.stringify(out), now]);
+      res.json(out);
+    } catch (e) {
+      res.status(502).json({ status: false, message: 'Gagal ambil file MediaFire' });
+    }
+  });
+});
+
 function platformDownload(platformKey) {
   const pf = PLATFORMS[platformKey];
   return (req, res) => {
