@@ -74,11 +74,17 @@ router.get('/tools/tts', checkKey, (req, res) => {
 
 // ============ 🟢 BRAT MAKER (meme trending!) ============
 router.get('/canvas/brat', checkKey, (req, res) => {
-  const text = (req.query.text || 'brat').replace(/[<>&]/g, '').substring(0, 30).toLowerCase();
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600">
-    <rect width="600" height="600" fill="#8ACE00"/>
-    <foreignObject x="30" y="200" width="540" height="200">
-      <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial,sans-serif;font-size:52px;color:#000;filter:blur(1px);text-align:center;word-wrap:break-word;">${text}</div>
+  const text = (req.query.text || 'brat').replace(/[<>&]/g, '').substring(0, 40).toLowerCase();
+  // Brat autentik: Arial stretched, blur halus, teks sedikit di atas tengah
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800">
+    <defs>
+      <filter id="bratBlur" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="1.2"/>
+      </filter>
+    </defs>
+    <rect width="800" height="800" fill="#8ACE00"/>
+    <foreignObject x="60" y="280" width="680" height="240">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Arial Narrow',Arial,sans-serif;font-size:72px;font-stretch:condensed;letter-spacing:-2px;color:#111;filter:blur(1.2px);text-align:center;word-wrap:break-word;line-height:1.1;transform:scaleX(0.85);transform-origin:center;">${text}</div>
     </foreignObject>
   </svg>`;
   res.set('Content-Type', 'image/svg+xml').send(svg);
