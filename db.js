@@ -7,10 +7,13 @@ db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS keys (
     key TEXT PRIMARY KEY,
     name TEXT,
+    tier TEXT DEFAULT 'free',
     quota INTEGER DEFAULT 1000,
     used INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+  // Migrasi: tambah kolom tier kalau DB lama belum punya
+  db.run(`ALTER TABLE keys ADD COLUMN tier TEXT DEFAULT 'free'`, () => {});
   db.run(`CREATE TABLE IF NOT EXISTS logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     key TEXT,
