@@ -1,0 +1,31 @@
+DRAF PENGUMUMAN LAUNCH HABIBI API — 2026-10-14
+(copy-paste ke channel WA / status / grup)
+Fakta diverifikasi dari halaman /docs live (dicek 2026-10-14 19:02 WIB).
+
+=== VERSI PANJANG (channel) ===
+🚀 *HABIBI API RESMI RILIS!* 🚀
+
+REST API buatan sendiri buat kebutuhan bot & tools kamu — gratis!
+
+📌 https://apiku.habibihcloud.eu.cc/docs
+
+✨ *98 endpoint* dalam 15 kategori, di antaranya:
+• 📥 Downloader — YouTube, TikTok (no watermark), IG, FB, Twitter/X, MP3, dll
+• 🤖 AI & Search — chat AI, generate gambar, search
+• 🛠️ Tools — TTS, translate, OCR, screenshot web
+• 🎨 Canvas & Ephoto — brat meme (+ versi video bratvid), efek foto 360
+• 🎮 Stalker — cek akun ML, FF, dan game lainnya
+• 🕌 Islami, 🌤️ Cuaca, 😂 Fun, dan lainnya
+
+🔑 *Cara pakai:* buka docs → isi nama di "Belum punya API Key?" → Generate → key langsung bisa dipakai test di docs (ada tombol 🧪 Test di tiap endpoint).
+
+💎 Tier gratis buat testing, tier premium kuota 100x lipat buat yang butuh serius. Order premium: chat admin 👉 [NOMOR ADMIN]
+
+=== VERSI PENDEK (status WA) ===
+🚀 Habibi API udah live! 98 endpoint gratis (downloader, AI, TTS, brat, stalker game). Generate key langsung di docs, ada tombol test tiap endpoint: apiku.habibihcloud.eu.cc/docs 💎
+
+CATATAN SEBELUM POSTING:
+- Ganti [NOMOR ADMIN] dengan nomor CS yang aktif.
+- Angka kuota tier (gratis 1000 / premium 100.000 req — dari implementasi backend, periode reset belum terverifikasi) TIDAK tercantum di halaman /docs. Kalau mau cantumkan angka di promo, konfirmasi dulu periode reset-nya (harian/bulanan) dari kode backend.
+- Waktu posting terbaik: malam ini atau besok pagi (jam rame channel).
+- Saran: posting juga ke 4 channel WA Habibih Cloud ID + status WA bisnis.

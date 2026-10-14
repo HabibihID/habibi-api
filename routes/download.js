@@ -44,12 +44,22 @@ function validUrl(u) {
   } catch { return false; }
 }
 
+function ytdlpArgs(extra) {
+  // Tambah --proxy kalau YTDLP_PROXY di-set di .env
+  // Format: http://user:pass@host:port atau http://host:port
+  const args = [...extra];
+  if (process.env.YTDLP_PROXY) {
+    args.push('--proxy', process.env.YTDLP_PROXY);
+  }
+  return args;
+}
+
 function ytdlpJson(url) {
   return new Promise((resolve, reject) => {
     const ua = UA_POOL[Math.floor(Math.random() * UA_POOL.length)];
     execFile('yt-dlp',
-      ['--dump-json', '--no-playlist', '--no-warnings',
-       '--socket-timeout', '12', '--user-agent', ua, url],
+      ytdlpArgs(['--dump-json', '--no-playlist', '--no-warnings',
+       '--socket-timeout', '12', '--user-agent', ua, url]),
       { timeout: 30000, maxBuffer: 8 * 1024 * 1024 },
       (err, stdout) => {
         if (err) {
@@ -274,9 +284,9 @@ router.get('/download/yt-search', checkKey, (req, res) => {
     }
     const ua = UA_POOL[Math.floor(Math.random() * UA_POOL.length)];
     execFile('yt-dlp',
-      ['--dump-json', '--flat-playlist', '--no-warnings',
+      ytdlpArgs(['--dump-json', '--flat-playlist', '--no-warnings',
        '--socket-timeout', '12', '--user-agent', ua,
-       `ytsearch${n}:${q}`],
+       `ytsearch${n}:${q}`]),
       { timeout: 30000, maxBuffer: 8 * 1024 * 1024 },
       (err, stdout) => {
         if (err) return res.status(502).json({ status: false, message: 'Gagal search YouTube' });
